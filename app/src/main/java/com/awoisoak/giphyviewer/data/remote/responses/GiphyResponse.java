@@ -1,4 +1,4 @@
-package com.awoisoak.giphyviewer.source.remote.responses;
+package com.awoisoak.giphyviewer.data.remote.responses;
 
 /**
  *  Giphy Response

@@ -1,14 +1,13 @@
-package com.awoisoak.giphyviewer.source.remote;
+package com.awoisoak.giphyviewer.data.remote;
 
 
-import com.awoisoak.giphyviewer.source.Gif;
-import com.awoisoak.giphyviewer.source.remote.responses.GiphyResponse;
-import com.awoisoak.giphyviewer.source.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.Gif;
+import com.awoisoak.giphyviewer.data.remote.responses.GiphyResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;

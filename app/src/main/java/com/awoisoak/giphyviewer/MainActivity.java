@@ -10,11 +10,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.ImageView;
 
-import com.awoisoak.giphyviewer.source.Gif;
-import com.awoisoak.giphyviewer.source.remote.GiphyListener;
-import com.awoisoak.giphyviewer.source.remote.GiphyManager;
-import com.awoisoak.giphyviewer.source.remote.responses.ErrorResponse;
-import com.awoisoak.giphyviewer.source.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.Gif;
+import com.awoisoak.giphyviewer.data.remote.GiphyListener;
+import com.awoisoak.giphyviewer.data.remote.GiphyManager;
+import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
 import com.bumptech.glide.Glide;
 
 import java.util.List;

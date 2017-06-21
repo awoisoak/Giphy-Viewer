@@ -1,4 +1,4 @@
-package com.awoisoak.giphyviewer.source;
+package com.awoisoak.giphyviewer.data;
 
 
 

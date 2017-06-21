@@ -1,6 +1,6 @@
-package com.awoisoak.giphyviewer.source.remote.responses;
+package com.awoisoak.giphyviewer.data.remote.responses;
 
-import com.awoisoak.giphyviewer.source.Gif;
+import com.awoisoak.giphyviewer.data.Gif;
 
 import java.util.List;
 
