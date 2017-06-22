@@ -69,13 +69,13 @@ public class GiphyManager implements GiphyApi {
 
     @Override
     public void search(String text, int offset, GiphyListener<ListGifsResponse> l) {
-        Call<ListGifsResponse> c = service.search(text, offset);
+        Call<ListGifsResponse> c = service.search(text, offset, GiphyApi.MAX_NUMBER_SEARCH_GIFS_RETURNED);
         responseRequest(c, l);
     }
 
     @Override
     public void trending(GiphyListener<ListGifsResponse> l) {
-        Call<ListGifsResponse> c = service.trending();
+        Call<ListGifsResponse> c = service.trending(GiphyApi.MAX_NUMBER_TRENDING_GIFS_RETURNED);
         responseRequest(c, l);
     }
 

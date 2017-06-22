@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -17,12 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.DaggerOnlineGifsComponent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.OnlineGifsModule;
+import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
 
 import java.util.List;
 
@@ -78,6 +79,20 @@ public class OnlineGifsFragment extends Fragment
     }
 
 
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.online_gifs_fragment, container, false);
+        ButterKnife.bind(this, rootView);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        addOnScrollListener();
+        initDagger();
+        mPresenter.onCreate();
+        return rootView;
+    }
+
     /**
      * Method to detect when the RecyclerView bottom is reached
      */
@@ -95,21 +110,6 @@ public class OnlineGifsFragment extends Fragment
                 }
             }
         });
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.online_gifs_fragment, container, false);
-        ButterKnife.bind(this, rootView);
-//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        addOnScrollListener();
-        initDagger();
-        mPresenter.onCreate();
-        return rootView;
     }
 
     private void initDagger() {
@@ -189,17 +189,15 @@ public class OnlineGifsFragment extends Fragment
 
     @Override
     public void showErrorSnackbar() {
-        mSnackbar =
-                Snackbar.make(mRecyclerView, getResources().getString(R.string.error_network_connection),
-                              Snackbar.LENGTH_INDEFINITE).setAction(
-                        "Retry", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mSnackbar.dismiss();
-                                showLoadingSnackbar();
-                                mPresenter.onRetrySearchGifsRequest();
-                            }
-                        });
+        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.error_network_connection),
+                                  Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSnackbar.dismiss();
+                showLoadingSnackbar();
+                mPresenter.onRetrySearchGifsRequest();
+            }
+        });
         mSnackbar.show();
     }
 
@@ -218,6 +216,16 @@ public class OnlineGifsFragment extends Fragment
     @Override
     public String getSearchText() {
         return mQuery;
+    }
+
+    @Override
+    public void showtoast(final String message) {
+        ThreadPool.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

@@ -12,7 +12,7 @@ import retrofit2.http.Query;
  */
 
 public interface GiphyService {
-//TODO we might use ORIGINAL if the UIX is better
+    //TODO we might use ORIGINAL if the UIX is better
 
     String DATA = "data";
     String ID = "id";
@@ -24,21 +24,22 @@ public interface GiphyService {
 
     /**
      * Search all GIPHY GIFs for a word or phrase.
-     * The maximum number of records to return per query is {@link GiphyApi#MAX_NUMBER_GIFS_RETURNED}
+     * The maximum number of records to return per query is {@link GiphyApi#MAX_NUMBER_SEARCH_GIFS_RETURNED}
      *
-     *
-     * @param offset, An optional results offset. Defaults to 0.
+     * @param text   Search query term or prhase.
+     * @param offset Defaults to 0.
+     * @param limit  The maximum number of records to return. (default 25)
      */
     @GET("/v1/gifs/search")
-    Call<ListGifsResponse> search(@Query("q") String text, @Query("offset") int offset);
+    Call<ListGifsResponse> search(@Query("q") String text, @Query("offset") int offset, @Query("limit") int limit);
 
     /**
      * Fetch GIFs currently trending online. Hand curated by the GIPHY editorial team.
      * The data returned mirrors the GIFs showcased on the GIPHY homepage.
-     * Returns {@link GiphyApi#MAX_NUMBER_GIFS_RETURNED}
+     * Returns {@link GiphyApi#MAX_NUMBER_TRENDING_GIFS_RETURNED}
      *
-     * @return
+     * @param limit The maximum number of records to return. (default 25)
      */
     @GET("/v1/gifs/trending")
-    Call<ListGifsResponse> trending();
+    Call<ListGifsResponse> trending(@Query("limit") int limit);
 }

@@ -55,4 +55,10 @@ public interface OnlineGifsView {
      */
     String getSearchText();
 
+    /**
+     * Display a toast with the passed message
+     * @param message
+     */
+    void showtoast(String message);
+
 }

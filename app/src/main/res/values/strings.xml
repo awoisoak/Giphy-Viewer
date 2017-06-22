@@ -4,4 +4,5 @@
     <string name="search_hint">Introduce the gif term to search</string>
     <string name="loading_gifs">Loading Gifs...</string>
     <string name="error_network_connection">Couldn\'t connect to the server</string>
+    <string name="no_gifs_found">No gifs found, please try with a new term</string>
 </resources>

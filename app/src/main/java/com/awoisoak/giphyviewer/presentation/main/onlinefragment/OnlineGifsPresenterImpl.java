@@ -3,6 +3,7 @@ package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
 
 import android.util.Log;
 
+import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
@@ -57,7 +58,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
 
-
     /**
      * This method will be called when the interactor returns the new gifs
      * //TODO This will be called for both trending and search gifs. Check whether we should split them
@@ -69,13 +69,22 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
         Log.d(TAG, "@BUS | onGifsReceivedEvent | response | code = " + response.getCode());
 
         if (response.getList().size() == 0) {
-            Log.e(TAG, "onGifsReceivedEvent = 0??");
+            Log.d(TAG, "onGifsReceivedEvent | no gifs returned with query = "+mView.getSearchText());
+            mView.showtoast(((OnlineGifsFragment) mView).getResources().getString(R.string.no_gifs_found));
             return;
+        }
+
+        //We make sure bind a new list against the adapter
+        if (isFirstSearchRequest) {
+            mGifs.clear();
         }
 
         //Add the new gifs to the array and increase the offset
         mGifs.addAll(response.getList());
-        increaseOffset();
+
+        if (!isTrendingRequest){
+            increaseOffset();
+        }
 
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
@@ -120,9 +129,9 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
 
-
-
     private void requestToSearchNewGifs() {
+        System.out.println("awoooo | OnlineGifsPresenterImple | requestToSearchNewGifs | mIsGifsRequestRunning="+mIsGifsRequestRunning
+        +"| isFirstSearchRequest = "+isFirstSearchRequest);
         if (!mIsGifsRequestRunning) {
             if (!isFirstSearchRequest) {
                 mView.showLoadingSnackbar();
@@ -159,13 +168,14 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
     public void increaseOffset() {
-        mOffset += GiphyApi.MAX_NUMBER_GIFS_RETURNED;
+        mOffset += GiphyApi.MAX_NUMBER_SEARCH_GIFS_RETURNED;
     }
 
     @Override
     public void onSearchSubmitted(final String query) {
-        //Is a new search so we clear the offset
         mOffset = 0;
+        isFirstSearchRequest = true;
+        mAllPostsDownloaded = false;
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
@@ -176,6 +186,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public void onBottomReached() {
+        System.out.println("awooooooo | OnlineGifsPresenterImpl | onBottomReached");
         if (mAllPostsDownloaded) {
             return;
         } else {

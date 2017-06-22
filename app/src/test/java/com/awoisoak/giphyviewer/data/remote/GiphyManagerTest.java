@@ -22,7 +22,7 @@ public class GiphyManagerTest {
             @Override
             public void onResponse(ListGifsResponse response) {
                 final List<Gif> list = response.getList();
-                assert (list.size() == GiphyApi.MAX_NUMBER_GIFS_RETURNED);
+                assert (list.size() == GiphyApi.MAX_NUMBER_SEARCH_GIFS_RETURNED);
                 for (Gif gif : list){
                     assertNotNull(gif.getUrl());
                     assertNotEquals(gif.getUrl(),"");
@@ -46,7 +46,7 @@ public class GiphyManagerTest {
             @Override
             public void onResponse(ListGifsResponse response) {
                 final List<Gif> list = response.getList();
-                assert (list.size() == GiphyApi.MAX_NUMBER_GIFS_RETURNED);
+                assert (list.size() == GiphyApi.MAX_NUMBER_TRENDING_GIFS_RETURNED);
                 for (Gif gif : list){
                     assertNotNull(gif.getUrl());
                     assertNotEquals(gif.getUrl(),"");

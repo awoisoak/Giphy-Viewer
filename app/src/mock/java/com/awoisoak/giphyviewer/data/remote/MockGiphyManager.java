@@ -17,17 +17,15 @@ public class MockGiphyManager implements GiphyApi {
     private static final String TAG = MockGiphyManager.class.getSimpleName();
 
     /**
-     * It assumes there is 30 gifs in the website. As the default per_page argument is 25, it means 2 total pages
-     * +info: https://developers.giphy.com/docs/
+     * It assumes there is 7 gifs in the website. As the default per_page argument is 5, it means 2 total pages
      */
-    private static int TOTAL_SEARCH_RECORDS = 30;
+    private static int TOTAL_SEARCH_RECORDS = 7;
     private static int TOTAL_SEARCH_PAGES = 2;
 
     /**
-     * By default trending query will return 25 items in a single page
-     * +info: https://developers.giphy.com/docs/
+     * The trending query will return 7 items in a single page
      */
-    private static int TOTAL_TRENDING_RECORDS = 25;
+    private static int TOTAL_TRENDING_RECORDS = 7;
     private static int TOTAL_TRENDING_PAGES = 1;
 
     private static int STATUS_OK = 200;

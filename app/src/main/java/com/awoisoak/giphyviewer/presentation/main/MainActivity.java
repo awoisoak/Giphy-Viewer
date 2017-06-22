@@ -20,7 +20,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-    //TODO change the MAX_NUMBER_GIFS_RETURNED to 10 or so? (too many icons by default? or the size is not so big?)
+    //TODO remove icons that are not used
+    //TODO fix the bug when doanloading gifs, we disable internet, retry once wifi enabled and the whole recyclerview is binded
+    //TODO fix bug when starting without network and press retry once wifi enabled
+    //TODO make the trending gifs infinite too?
+    //TODO dont allow landscape mode?
     //TODO Should we use interactors to access to the future local data? or access directly with a manager?
     //TODO look for visor,Post,awoisoak,WP strings
     //TODO Review the use of scopes in Dagger
@@ -33,9 +37,11 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.container) ViewPager mViewPager;
-    @BindView(R.id.tabDots) TabLayout mTabLayout;
+    @BindView(R.id.tabLayout) TabLayout mTabLayout;
     @BindView(R.id.toolbar_title) TextView mToolbarTitle;
 
+    private static final int SEARCH_TAB = 0;
+    private static final int FAV_TAB = 1;
     Context mContext = this;
 
     @Override
@@ -44,15 +50,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        // Create the adapter that will return the corresponding fragment
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(sectionsPagerAdapter);
-
-        //Workaround to add the 'dots' to the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
 
+        setTabStyle();
         setToolbarTitle();
 
+    }
+
+    private void setTabStyle() {
+        TabLayout.Tab tabCall = mTabLayout.getTabAt(SEARCH_TAB);
+        tabCall.setIcon(R.drawable.gif_selector);
+        TabLayout.Tab tabCall2 = mTabLayout.getTabAt(FAV_TAB);
+        tabCall2.setIcon(R.drawable.favorite_selector);
     }
 
     private void setToolbarTitle() {
@@ -87,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
+                case SEARCH_TAB:
                     return OnlineGifsFragment.newInstance(position + 1);
-                case 1:
+                case FAV_TAB:
                     return PlaceholderFragment2.newInstance(position + 1);
                 default:
                     Log.e(TAG, "Error position not expected | position " + position);
@@ -106,9 +117,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0:
-                    return "";
-                case 1:
+                case SEARCH_TAB:
+//                    return "Search";
+                    return"";
+                case FAV_TAB:
+//                    return "Your Favourites";
                     return "";
             }
             return null;
