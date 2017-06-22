@@ -6,8 +6,8 @@ import android.util.Log;
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
-import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
-import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ErrorResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
@@ -195,8 +195,8 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
     @Override
-    public void onGifSetAsFavourite(boolean favourite) {
-        //TODO how to manage the favourite feature?
+    public void onGifSetAsFavourite(Gif gif) {
+        System.out.println("awooooooo | OnlineGifsPresenterImpl | onGifSetAsFavourite");
     }
 
 

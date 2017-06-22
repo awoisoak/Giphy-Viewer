@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.data.remote;
 
 
-import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -12,7 +12,6 @@ import retrofit2.http.Query;
  */
 
 public interface GiphyService {
-    //TODO we might use ORIGINAL if the UIX is better
 
     String DATA = "data";
     String ID = "id";

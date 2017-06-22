@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.data.remote;
 
 
-import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 
 /**
  * Interface for the Giphy API

@@ -1,6 +1,7 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
 
 
+import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.presentation.IPresenter;
 
 public interface OnlineGifsPresenter extends IPresenter {
@@ -29,6 +30,6 @@ public interface OnlineGifsPresenter extends IPresenter {
     /**
      * Called when the user set/unset as favourite one of the gifs
      */
-    void onGifSetAsFavourite(boolean favourite);
+    void onGifSetAsFavourite(Gif gif);
 
 }

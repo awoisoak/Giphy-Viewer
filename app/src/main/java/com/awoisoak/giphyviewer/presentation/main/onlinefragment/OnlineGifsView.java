@@ -44,13 +44,6 @@ public interface OnlineGifsView {
 
 
     /**
-     * Set the specific ivGif as favourite.
-     * It will have to change the icon to be displayed as favourite by the user
-     */
-    void setGifAsFavourite(boolean favourite);
-
-
-    /**
      * Returns the last search term introduced by the user
      */
     String getSearchText();

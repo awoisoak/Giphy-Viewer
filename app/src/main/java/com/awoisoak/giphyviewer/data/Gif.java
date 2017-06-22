@@ -27,6 +27,10 @@ public class Gif {
     @DatabaseField(columnName = FAVORITE, dataType = DataType.BOOLEAN, canBeNull = false)
     boolean favorite;
 
+    /**
+     * Need an empty constructor to run the instrumentation test
+     */
+    public Gif(){}
 
     public Gif(String id, String url, boolean favorite) {
         this.id = id;

@@ -4,7 +4,7 @@ import android.util.Log;
 
 
 import com.awoisoak.giphyviewer.data.Gif;
-import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 
 import java.util.ArrayList;
 import java.util.List;

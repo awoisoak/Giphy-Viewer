@@ -1,7 +1,8 @@
 package com.awoisoak.giphyviewer.data.remote;
 
 
-import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.GiphyManager;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ErrorResponse;
 
 /**
  * Giphy Listener

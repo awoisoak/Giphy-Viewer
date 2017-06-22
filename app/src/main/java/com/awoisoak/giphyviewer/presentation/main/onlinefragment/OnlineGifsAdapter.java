@@ -1,7 +1,6 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +16,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.R.drawable.ic_menu_search;
-
 
 public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.GifViewHolder> {
 
@@ -30,7 +27,7 @@ public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.Gi
      * Listener to detect when the user click on a Gif item
      */
     public interface GifItemClickListener {
-        void onGifItemClick(Gif Gif);
+        void onFavouriteGifItemClick(Gif Gif);
     }
 
     public OnlineGifsAdapter(List<Gif> gifs, GifItemClickListener listener, Context context) {
@@ -69,7 +66,8 @@ public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.Gi
         public GifViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
+            favouriteButton.setOnClickListener(this);
+//            itemView.setOnClickListener(this);
         }
 
         public void bindGif(Gif gif) {
@@ -86,7 +84,7 @@ public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.Gi
 
         @Override
         public void onClick(View v) {
-            mListener.onGifItemClick(mGifs.get(getAdapterPosition()));
+            mListener.onFavouriteGifItemClick(mGifs.get(getAdapterPosition()));
         }
     }
 }

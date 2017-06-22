@@ -20,12 +20,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+    //TODO GiphyApiComponent is not used at all by dagger??? (it should not even compile!)
+    //TODO Should we use interactors to access to the future local data? or access directly with a manager?
+    //The interactor could get an instance of the datastore with dagger? or should we create a singleton?
+        //We could just use the data store (without the mnager), and use interactors, not using signals but threadpools for set something in the DB and asynctask when returning something?
     //TODO remove icons that are not used
     //TODO fix the bug when doanloading gifs, we disable internet, retry once wifi enabled and the whole recyclerview is binded
     //TODO fix bug when starting without network and press retry once wifi enabled
     //TODO make the trending gifs infinite too?
     //TODO dont allow landscape mode?
-    //TODO Should we use interactors to access to the future local data? or access directly with a manager?
     //TODO look for visor,Post,awoisoak,WP strings
     //TODO Review the use of scopes in Dagger
     //TODO why in GifsOnlineComponent only inject GifsOnlineFragment and no GifsOnlinePresenter

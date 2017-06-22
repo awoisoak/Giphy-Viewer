@@ -208,10 +208,6 @@ public class OnlineGifsFragment extends Fragment
         }
     }
 
-    @Override
-    public void setGifAsFavourite(boolean favourite) {
-        mPresenter.onGifSetAsFavourite(favourite);
-    }
 
     @Override
     public String getSearchText() {
@@ -229,7 +225,7 @@ public class OnlineGifsFragment extends Fragment
     }
 
     @Override
-    public void onGifItemClick(Gif Gif) {
-        //TODO do we need it to set the favourite property? otherwise Remove it!
+    public void onFavouriteGifItemClick(Gif gif) {
+        mPresenter.onGifSetAsFavourite(gif);
     }
 }

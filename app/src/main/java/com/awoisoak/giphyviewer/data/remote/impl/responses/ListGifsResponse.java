@@ -1,4 +1,4 @@
-package com.awoisoak.giphyviewer.data.remote.responses;
+package com.awoisoak.giphyviewer.data.remote.impl.responses;
 
 import com.awoisoak.giphyviewer.data.Gif;
 

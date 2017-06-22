@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.data.remote.dagger;
 
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
-import com.awoisoak.giphyviewer.data.remote.GiphyManager;
+import com.awoisoak.giphyviewer.data.remote.impl.GiphyManager;
 
 import dagger.Module;
 import dagger.Provides;

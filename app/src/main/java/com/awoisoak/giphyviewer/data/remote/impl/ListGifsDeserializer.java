@@ -1,9 +1,10 @@
-package com.awoisoak.giphyviewer.data.remote;
+package com.awoisoak.giphyviewer.data.remote.impl;
 
 
 import com.awoisoak.giphyviewer.data.Gif;
-import com.awoisoak.giphyviewer.data.remote.responses.GiphyResponse;
-import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.GiphyService;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.GiphyResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

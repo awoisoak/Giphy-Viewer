@@ -2,8 +2,8 @@ package com.awoisoak.giphyviewer.domain.interactors.impl;
 
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.GiphyListener;
-import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
-import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ErrorResponse;
+import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
 
