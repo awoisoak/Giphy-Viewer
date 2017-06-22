@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.data.remote;
 
 
-import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
 
 /**
  * Interface for the Giphy API
@@ -22,7 +22,7 @@ public interface GiphyApi {
      * @param text, Search query term or phrase.
      * @param offset, An optional results offset. Defaults to 0.
      */
-    void search(String text, int offset, GiphyListener<ListsGifsResponse> l);
+    void search(String text, int offset, GiphyListener<ListGifsResponse> l);
 
 
     /**
@@ -33,7 +33,7 @@ public interface GiphyApi {
      * @return
      */
 
-    void trending(GiphyListener<ListsGifsResponse> l);
+    void trending(GiphyListener<ListGifsResponse> l);
 
 
 

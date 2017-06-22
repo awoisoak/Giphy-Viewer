@@ -3,7 +3,7 @@ package com.awoisoak.giphyviewer.domain.interactors.impl;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.GiphyListener;
 import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
-import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
 import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
 
@@ -27,9 +27,9 @@ public class GifsRequestInteractorImpl implements GifsRequestInteractor {
 
     @Override
     public void searchGifs(String query, int offset) {
-        api.search(query, offset, new GiphyListener<ListsGifsResponse>() {
+        api.search(query, offset, new GiphyListener<ListGifsResponse>() {
             @Override
-            public void onResponse(ListsGifsResponse response) {
+            public void onResponse(ListGifsResponse response) {
                 SignalManagerFactory.getSignalManager().postEvent(response);
             }
 
@@ -43,9 +43,9 @@ public class GifsRequestInteractorImpl implements GifsRequestInteractor {
 
     @Override
     public void getTrendingGifs() {
-        api.trending( new GiphyListener<ListsGifsResponse>() {
+        api.trending( new GiphyListener<ListGifsResponse>() {
             @Override
-            public void onResponse(ListsGifsResponse response) {
+            public void onResponse(ListGifsResponse response) {
                 SignalManagerFactory.getSignalManager().postEvent(response);
             }
 

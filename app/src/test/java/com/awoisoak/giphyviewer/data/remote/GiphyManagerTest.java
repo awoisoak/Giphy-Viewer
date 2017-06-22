@@ -1,10 +1,8 @@
 package com.awoisoak.giphyviewer.data.remote;
 
-import android.util.Log;
-
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
-import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,9 +18,9 @@ public class GiphyManagerTest {
     @Test
     public void search_request() throws Exception {
 //TODO check the number of pages is bigger than 1
-        GiphyManager.getInstance().search("Putin", 0, new GiphyListener<ListsGifsResponse>() {
+        GiphyManager.getInstance().search("Putin", 0, new GiphyListener<ListGifsResponse>() {
             @Override
-            public void onResponse(ListsGifsResponse response) {
+            public void onResponse(ListGifsResponse response) {
                 final List<Gif> list = response.getList();
                 assert (list.size() == GiphyApi.MAX_NUMBER_GIFS_RETURNED);
                 for (Gif gif : list){
@@ -44,9 +42,9 @@ public class GiphyManagerTest {
     public void trending_request() throws Exception {
         //TODO check the number of pages is just 1
 
-        GiphyManager.getInstance().trending(new GiphyListener<ListsGifsResponse>() {
+        GiphyManager.getInstance().trending(new GiphyListener<ListGifsResponse>() {
             @Override
-            public void onResponse(ListsGifsResponse response) {
+            public void onResponse(ListGifsResponse response) {
                 final List<Gif> list = response.getList();
                 assert (list.size() == GiphyApi.MAX_NUMBER_GIFS_RETURNED);
                 for (Gif gif : list){

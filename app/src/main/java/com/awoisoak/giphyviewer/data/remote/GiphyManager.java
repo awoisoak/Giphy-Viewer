@@ -2,7 +2,7 @@ package com.awoisoak.giphyviewer.data.remote;
 
 import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
 import com.awoisoak.giphyviewer.data.remote.responses.GiphyResponse;
-import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -38,7 +38,7 @@ public class GiphyManager implements GiphyApi {
     static int NO_CODE = -1;
     private static GiphyManager instance;
     Gson gson = new GsonBuilder()
-            .registerTypeAdapter(ListsGifsResponse.class, new ListGifsDeserializer<ListsGifsResponse>())
+            .registerTypeAdapter(ListGifsResponse.class, new ListGifsDeserializer<ListGifsResponse>())
             .disableHtmlEscaping()
             .create();
 
@@ -68,14 +68,14 @@ public class GiphyManager implements GiphyApi {
 
 
     @Override
-    public void search(String text, int offset, GiphyListener<ListsGifsResponse> l) {
-        Call<ListsGifsResponse> c = service.search(text, offset);
+    public void search(String text, int offset, GiphyListener<ListGifsResponse> l) {
+        Call<ListGifsResponse> c = service.search(text, offset);
         responseRequest(c, l);
     }
 
     @Override
-    public void trending(GiphyListener<ListsGifsResponse> l) {
-        Call<ListsGifsResponse> c = service.trending();
+    public void trending(GiphyListener<ListGifsResponse> l) {
+        Call<ListGifsResponse> c = service.trending();
         responseRequest(c, l);
     }
 

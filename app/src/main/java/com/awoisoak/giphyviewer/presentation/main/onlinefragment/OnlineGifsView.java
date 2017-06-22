@@ -1,13 +1,11 @@
-package com.awoisoak.giphyviewer.presentation.main.fragment1;
-
-import android.app.Fragment;
+package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
 
 import com.awoisoak.giphyviewer.data.Gif;
 
 import java.util.List;
 
 
-public interface GifsOnlineView{
+public interface OnlineGifsView {
 
     /**
      * Hide the initial ProgressBar displayed before the trending gifs are retrieved
@@ -19,13 +17,13 @@ public interface GifsOnlineView{
      * The implementation should create the adapter and set them to the RecyclerView
      * @param gifs
      */
-    void bindPostsList(List<Gif> gifs);
+    void bindGifsList(List<Gif> gifs);
 
     /**
      * Update the adapter with the new gifs received
      * @param gifs
      */
-    void updatePostsList(List<Gif> gifs);
+    void updateGifsList(List<Gif> gifs);
 
     /**
      * Display Snackbar to inform the user of new gifs being retrieved
@@ -46,9 +44,15 @@ public interface GifsOnlineView{
 
 
     /**
-     * Set the specific gif as favourite.
+     * Set the specific ivGif as favourite.
      * It will have to change the icon to be displayed as favourite by the user
      */
     void setGifAsFavourite(boolean favourite);
+
+
+    /**
+     * Returns the last search term introduced by the user
+     */
+    String getSearchText();
 
 }

@@ -4,7 +4,7 @@ import android.util.Log;
 
 
 import com.awoisoak.giphyviewer.data.Gif;
-import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,28 +44,28 @@ public class MockGiphyManager implements GiphyApi {
 
 
     @Override
-    public void search(String text, int offset, GiphyListener<ListsGifsResponse> l) {
+    public void search(String text, int offset, GiphyListener<ListGifsResponse> l) {
         Log.d(TAG,"MockGiphyManager | search");
 
         List<Gif> gifList = new ArrayList<>();
-        ListsGifsResponse r = null;
+        ListGifsResponse r = null;
 
         //Fill the List with all Gifs available
         Gif Gif;
         for (int i = 0; i < TOTAL_SEARCH_RECORDS; i++) {
-            Gif = new Gif(Integer.toString(i), "https://giphy.com/gifs/kamui-kobayashi-vLD26jxqD8DYI");
+            Gif = new Gif(Integer.toString(i), "https://media1.giphy.com/media/5zGPIuq3IOfXG/giphy.gif",false);
             gifList.add(Gif);
         }
         // Modify the List depending on the offset
         if (offset < gifList.size()) {
             gifList = gifList.subList(offset, gifList.size() - 1);
-            r = new ListsGifsResponse(gifList);
+            r = new ListGifsResponse(gifList);
             r.setCode(STATUS_OK);
             r.setTotalPages(TOTAL_SEARCH_PAGES);
             r.setTotalRecords(TOTAL_SEARCH_RECORDS);
         } else {
             List<Gif> emptyList = new ArrayList<>();
-            r = new ListsGifsResponse(emptyList);
+            r = new ListGifsResponse(emptyList);
             r.setCode(STATUS_OK);
             r.setTotalPages(0);
             r.setTotalRecords(0);
@@ -83,18 +83,19 @@ public class MockGiphyManager implements GiphyApi {
     }
 
     @Override
-    public void trending(GiphyListener<ListsGifsResponse> l) {
+    public void trending(GiphyListener<ListGifsResponse> l) {
         Log.d(TAG,"MockGiphyManager | search");
 
         List<Gif> gifList = new ArrayList<>();
-        ListsGifsResponse r = null;
 
         //Fill the List with all Gifs available
         Gif Gif;
         for (int i = 0; i < TOTAL_SEARCH_RECORDS; i++) {
-            Gif = new Gif(Integer.toString(i), "https://giphy.com/gifs/yamhTJJOYmz7O");
+            Gif = new Gif(Integer.toString(i), "http://i.imgur.com/h5rfQ6V.gif",false);
             gifList.add(Gif);
         }
+        ListGifsResponse r = new ListGifsResponse(gifList);
+
         // Modify the List depending on the offset
         r.setCode(STATUS_OK);
         r.setTotalPages(TOTAL_TRENDING_PAGES);

@@ -3,7 +3,7 @@ package com.awoisoak.giphyviewer.data.remote;
 
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.remote.responses.GiphyResponse;
-import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 
 
-class ListGifsDeserializer<T extends GiphyResponse> implements JsonDeserializer<ListsGifsResponse> {
+class ListGifsDeserializer<T extends GiphyResponse> implements JsonDeserializer<ListGifsResponse> {
 
 
     public ListGifsDeserializer() {
@@ -34,8 +34,16 @@ class ListGifsDeserializer<T extends GiphyResponse> implements JsonDeserializer<
      * @throws JsonParseException
      */
     @Override
-    public ListsGifsResponse deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
+    public ListGifsResponse deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
             throws JsonParseException {
+
+        JsonElement totalCount =
+                je.getAsJsonObject().get(GiphyService.PAGINATION).getAsJsonObject().get(GiphyService.TOTAL_COUNT);
+
+        /**
+         * trending gifs request do not return totalcount
+         */
+        int totalGifs = totalCount == null ? -1 : totalCount.getAsInt();
 
         JsonElement data = je.getAsJsonObject().get(GiphyService.DATA);
         JsonArray arrayOfGifs = data.getAsJsonArray();
@@ -49,10 +57,11 @@ class ListGifsDeserializer<T extends GiphyResponse> implements JsonDeserializer<
             id = Gif.getAsJsonObject().get(GiphyService.ID);
             url = Gif.getAsJsonObject().get(GiphyService.IMAGES).getAsJsonObject().get(GiphyService.FIXED_HEIGHT)
                     .getAsJsonObject().get(GiphyService.URL);
-
-            GifsList.add(new Gif(id.getAsString(), url.getAsString()));
+            //TODO by default we set the favorite property to false but we will need to check with the DB before display
+            GifsList.add(new Gif(id.getAsString(), url.getAsString(), false));
         }
-        ListsGifsResponse r = new ListsGifsResponse(GifsList);
+        ListGifsResponse r = new ListGifsResponse(GifsList);
+        r.setTotalRecords(totalGifs);
         return r;
     }
 }

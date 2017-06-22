@@ -15,6 +15,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Gif {
     public final static String ID = "id";
     public final static String URL = "url";
+    public final static String FAVORITE = "favorite";
 
     @DatabaseField(id = true, columnName = ID)
     String id;
@@ -23,12 +24,14 @@ public class Gif {
     @DatabaseField(columnName = URL, dataType = DataType.STRING, canBeNull = false)
     String url;
 
+    @DatabaseField(columnName = FAVORITE, dataType = DataType.BOOLEAN, canBeNull = false)
+    boolean favorite;
 
 
-    public Gif(String id, String url) {
+    public Gif(String id, String url, boolean favorite) {
         this.id = id;
         this.url = url;
-
+        this.favorite = favorite;
     }
 
 
@@ -39,6 +42,10 @@ public class Gif {
 
     public String getUrl() {
         return url;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
     }
 
 }

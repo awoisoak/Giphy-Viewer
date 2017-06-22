@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.data.remote;
 
 
-import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.data.remote.responses.ListGifsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -19,6 +19,8 @@ public interface GiphyService {
     String IMAGES = "images";
     String FIXED_HEIGHT = "fixed_height";
     String URL = "url";
+    String PAGINATION = "pagination";
+    String TOTAL_COUNT = "total_count";
 
     /**
      * Search all GIPHY GIFs for a word or phrase.
@@ -28,7 +30,7 @@ public interface GiphyService {
      * @param offset, An optional results offset. Defaults to 0.
      */
     @GET("/v1/gifs/search")
-    Call<ListsGifsResponse> search(@Query("q") String text, @Query("offset") int offset);
+    Call<ListGifsResponse> search(@Query("q") String text, @Query("offset") int offset);
 
     /**
      * Fetch GIFs currently trending online. Hand curated by the GIPHY editorial team.
@@ -38,5 +40,5 @@ public interface GiphyService {
      * @return
      */
     @GET("/v1/gifs/trending")
-    Call<ListsGifsResponse> trending();
+    Call<ListGifsResponse> trending();
 }

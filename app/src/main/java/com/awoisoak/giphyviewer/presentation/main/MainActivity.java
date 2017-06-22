@@ -13,13 +13,14 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.awoisoak.giphyviewer.R;
-import com.awoisoak.giphyviewer.presentation.main.fragment1.GifsOnlineFragment;
-import com.awoisoak.giphyviewer.presentation.main.fragment2.PlaceholderFragment2;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsFragment;
+import com.awoisoak.giphyviewer.presentation.main.offlinefragment.PlaceholderFragment2;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+    //TODO change the MAX_NUMBER_GIFS_RETURNED to 10 or so? (too many icons by default? or the size is not so big?)
     //TODO Should we use interactors to access to the future local data? or access directly with a manager?
     //TODO look for visor,Post,awoisoak,WP strings
     //TODO Review the use of scopes in Dagger
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return GifsOnlineFragment.newInstance(position + 1);
+                    return OnlineGifsFragment.newInstance(position + 1);
                 case 1:
                     return PlaceholderFragment2.newInstance(position + 1);
                 default:

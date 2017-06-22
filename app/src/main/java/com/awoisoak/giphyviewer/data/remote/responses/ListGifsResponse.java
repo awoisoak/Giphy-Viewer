@@ -7,11 +7,11 @@ import java.util.List;
 /**
  * Response for a List Posts Requests
  */
-public class ListsGifsResponse extends GiphyResponse {
+public class ListGifsResponse extends GiphyResponse {
 
     List<Gif> list;
 
-    public ListsGifsResponse(List<Gif> list) {
+    public ListGifsResponse(List<Gif> list) {
         this.list = list;
     }
 
