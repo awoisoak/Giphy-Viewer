@@ -2,16 +2,15 @@ package com.awoisoak.giphyviewer.presentation.main.fragment1;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
@@ -19,13 +18,17 @@ import com.awoisoak.giphyviewer.data.remote.GiphyListener;
 import com.awoisoak.giphyviewer.data.remote.GiphyManager;
 import com.awoisoak.giphyviewer.data.remote.responses.ErrorResponse;
 import com.awoisoak.giphyviewer.data.remote.responses.ListsGifsResponse;
+import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
+import com.awoisoak.giphyviewer.presentation.main.fragment1.dagger.DaggerGifsOnlineComponent;
+import com.awoisoak.giphyviewer.presentation.main.fragment1.dagger.GifsOnlineModule;
 
 import java.util.List;
 
-import butterknife.BindView;
+import javax.inject.Inject;
+
 
 /**
- * A placeholder for First Fragment.
+ * A Fragment to display online gifs
  *
  * Req:
  * - Contains a search bar at the top.
@@ -33,25 +36,20 @@ import butterknife.BindView;
  * - Loading indicator while searching.
  * - The default items in the recycler view should be the trending gifs.
  */
-public class PlaceholderFragment1 extends Fragment implements SearchView.OnQueryTextListener{
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
+public class GifsOnlineFragment extends Fragment implements GifsOnlineView,SearchView.OnQueryTextListener{
+
     private static final String ARG_SECTION_NUMBER = "section_number";
     private SearchView mSearchView;
 
-    //        @BindView(R.id.toolbar) Toolbar mToolbar;
-
-    public PlaceholderFragment1() {
-    }
+    Snackbar mSnackbar;
+    @Inject
+    GifsOnlinePresenter mPresenter;
 
     /**
-     * Returns a new instance of this fragment for the given section
-     * number.
+     * Returns a new instance of this fragment for the given section number.
      */
-    public static PlaceholderFragment1 newInstance(int sectionNumber) {
-        PlaceholderFragment1 fragment = new PlaceholderFragment1();
+    public static GifsOnlineFragment newInstance(int sectionNumber) {
+        GifsOnlineFragment fragment = new GifsOnlineFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -62,6 +60,13 @@ public class PlaceholderFragment1 extends Fragment implements SearchView.OnQuery
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        DaggerGifsOnlineComponent.builder()
+                .giphyApiComponent(((GiphyViewerApplication) getActivity().getApplication()).getWPAPIComponent())
+                .gifsOnlineModule(new GifsOnlineModule(this))
+                .build().inject(this);
+
+        mPresenter.onCreate();
     }
 
     @Override
@@ -83,7 +88,7 @@ public class PlaceholderFragment1 extends Fragment implements SearchView.OnQuery
     @Override
     public boolean onQueryTextSubmit(final String query) {
         System.out.println("awooooooo onQueryTextSubmit = "+query);
-        //TODO move it to fragment1?
+        //TODO call the corresponding interactor
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -125,14 +130,38 @@ public class PlaceholderFragment1 extends Fragment implements SearchView.OnQuery
         return false;
     }
 
-//    @Override
-//    public void onHiddenChanged(boolean hidden) {
-//        System.out.println("awooooo Fragment1 | onHiddenChanged to = "+hidden);
-//        super.onHiddenChanged(hidden);
-//        if (!hidden){
-//            TextView tvTitle =(TextView)getActivity().findViewById(R.id.toolbar_title);
-//            tvTitle.setText("PlaceHolder1");
-//        }
-//    }
+    @Override
+    public void hideProgressBar() {
 
+    }
+
+    @Override
+    public void bindPostsList(List<Gif> gifs) {
+
+    }
+
+    @Override
+    public void updatePostsList(List<Gif> gifs) {
+
+    }
+
+    @Override
+    public void showLoadingSnackbar() {
+
+    }
+
+    @Override
+    public void showErrorSnackbar() {
+
+    }
+
+    @Override
+    public void hideSnackbar() {
+
+    }
+
+    @Override
+    public void setGifAsFavourite(boolean favourite) {
+
+    }
 }

@@ -13,14 +13,20 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.awoisoak.giphyviewer.R;
-import com.awoisoak.giphyviewer.presentation.main.fragment1.PlaceholderFragment1;
+import com.awoisoak.giphyviewer.presentation.main.fragment1.GifsOnlineFragment;
 import com.awoisoak.giphyviewer.presentation.main.fragment2.PlaceholderFragment2;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-    //TODO look for Post,awoisoak,WP strings
+    //TODO Should we use interactors to access to the future local data? or access directly with a manager?
+    //TODO look for visor,Post,awoisoak,WP strings
+    //TODO Review the use of scopes in Dagger
+    //TODO why in GifsOnlineComponent only inject GifsOnlineFragment and no GifsOnlinePresenter
+    //(this will use the @inject as well as it needs access to the interactor)
+    //TODO do we need a 'global' @ApplicationScope ?? maybe use it instead of @GiphyApiScope??
+    //TODO in GiphyViewerApplication there is a deprecated module from Dagger, take a look once it is stable
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -81,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return PlaceholderFragment1.newInstance(position + 1);
+                    return GifsOnlineFragment.newInstance(position + 1);
                 case 1:
                     return PlaceholderFragment2.newInstance(position + 1);
                 default:

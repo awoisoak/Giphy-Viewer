@@ -6,7 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Giphy Viewer Dagger Module that will provide the Context to the rest of the application
+ * Application Dagger Module that will provide the Context to the rest of the application
  */
 @Module
 public class ApplicationModule {
