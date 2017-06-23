@@ -1,4 +1,4 @@
-package com.awoisoak.giphyviewer.data.remote.dagger;
+package com.awoisoak.giphyviewer.data.local.dagger;
 
 import com.awoisoak.giphyviewer.data.local.GifDataStore;
 import com.awoisoak.giphyviewer.data.local.dagger.DatabaseScope;
@@ -14,7 +14,7 @@ public class DatabaseModule {
 
     @DatabaseScope
     @Provides
-    GifDataStore provideDataStore() throws SQLException {
+    GifDataStore provideDataStore()  {
         return new SQLiteGifDataStore();
         //TODO in case we would like to mock the database
 //        return new MockSQLiteGifDataStore();

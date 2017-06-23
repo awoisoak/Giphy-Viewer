@@ -119,7 +119,7 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
 
     @Override
     public void bindGifsList(List<Gif> gifs) {
-        Log.d(TAG, "awoooooo | OfflineGifsFragment | bindPostList");
+        Log.d(TAG, "awoooooo | OfflineGifsFragment | bindGifList");
         mAdapter = new OfflineGifsAdapter(gifs, this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -142,7 +142,7 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
                 }
             });
         } else {
-            Log.d(TAG, "awoooooo | OnlineGifsFragment | updatePostGallery | mAdapter is null!");
+            Log.d(TAG, "awoooooo | OnlineGifsFragment | updateGifGallery | mAdapter is null!");
         }
     }
 

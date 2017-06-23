@@ -5,7 +5,7 @@ import com.awoisoak.giphyviewer.data.Gif;
 import java.util.List;
 
 /**
- * Response for a List Posts Requests
+ * Response for a List Gifs Requests
  */
 public class ListGifsResponse extends GiphyResponse {
 

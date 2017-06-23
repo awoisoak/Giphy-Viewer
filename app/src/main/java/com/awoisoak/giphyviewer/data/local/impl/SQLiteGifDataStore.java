@@ -17,7 +17,7 @@ import java.util.concurrent.Callable;
 //TODO catch all the exceptions here, is an useless mess to throw them up
 public class SQLiteGifDataStore implements GifDataStore{
     private static final String TAG = SQLiteGifDataStore.class.getSimpleName();
-    private static final Context sContext = GiphyViewerApplication.getVisorApplication();
+    private static final Context sContext = GiphyViewerApplication.getGiphyViewerApplication();
     private final DatabaseHelper mDatabaseHelper;
     Dao<Gif, String> mGifDao;
 

@@ -125,7 +125,7 @@ public class OnlineGifsFragment extends Fragment
 
     private void initDagger() {
         DaggerOnlineGifsComponent.builder()
-                .giphyApiComponent(((GiphyViewerApplication) getActivity().getApplication()).getWPAPIComponent())
+                .giphyApiComponent(((GiphyViewerApplication) getActivity().getApplication()).getGiphyApiComponent())
                 .onlineGifsModule(new OnlineGifsModule(this))
                 .build().inject(this);
     }
@@ -161,14 +161,14 @@ public class OnlineGifsFragment extends Fragment
 
     @Override
     public void bindGifsList(List<Gif> gifs) {
-        Log.d(TAG, "awoooooo | OnlineGifsFragment | bindPostList");
+        Log.d(TAG, "awoooooo | OnlineGifsFragment | bindGifList");
         mAdapter = new OnlineGifsAdapter(gifs, this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void updateGifsList(List<Gif> gifs) {
-        Log.d(TAG, "awoooooo | OnlineGifsFragment | updatePostList");
+        Log.d(TAG, "awoooooo | OnlineGifsFragment | updateGifList");
 
         if (mAdapter != null) {
             /**
@@ -185,7 +185,7 @@ public class OnlineGifsFragment extends Fragment
                 }
             });
         } else {
-            Log.d(TAG, "awoooooo | OnlineGifsFragment | updatePostGallery | mAdapter is null!");
+            Log.d(TAG, "awoooooo | OnlineGifsFragment | updateGifGallery | mAdapter is null!");
         }
     }
 

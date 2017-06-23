@@ -28,7 +28,7 @@ public class GiphyViewerApplication extends Application {
                         .applicationModule(new ApplicationModule(getApplicationContext())).build();
     }
 
-    public GiphyApiComponent getWPAPIComponent() {
+    public GiphyApiComponent getGiphyApiComponent() {
         return mGiphyApiComponent;
     }
 
@@ -37,7 +37,7 @@ public class GiphyViewerApplication extends Application {
     }
 
 
-    public static GiphyViewerApplication getVisorApplication() {
+    public static GiphyViewerApplication getGiphyViewerApplication() {
         if (sGiphyViewerApplication == null) {
             throw new NullPointerException("GiphyViewerApplication is null");
         } else {

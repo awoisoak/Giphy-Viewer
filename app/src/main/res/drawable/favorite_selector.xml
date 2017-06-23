@@ -3,11 +3,11 @@
 
     <item
         android:state_selected="false"
-        android:drawable="@drawable/ic_favorite_white_48dp"
+        android:drawable="@drawable/ic_grade_white_48dp"
         />
 
     <item
         android:state_selected="true"
-        android:drawable="@drawable/ic_favorite_black_48dp" />
-
+        android:drawable="@drawable/ic_grade_black_48dp"
+         />
 </selector>

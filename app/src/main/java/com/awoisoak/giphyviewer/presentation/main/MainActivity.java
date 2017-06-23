@@ -13,15 +13,15 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.awoisoak.giphyviewer.R;
-import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsFragment;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl.OfflineGifsFragment;
-import com.awoisoak.giphyviewer.utils.signals.SignalManager;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsFragment;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+    //TODO Add animation with itenAnimator when removing a gif from offlineFragment?
     //TODO make sure the mock flavour compile correctly
     //TODO What to do with the favourited property of Gif? use it to distinguish the favourited one in the onlinefragment?
     //TODO GiphyApiComponent is not used at all by dagger??? (it should not even compile!)
@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int SEARCH_TAB = 0;
     public static final int FAV_TAB = 1;
-    Context mContext = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

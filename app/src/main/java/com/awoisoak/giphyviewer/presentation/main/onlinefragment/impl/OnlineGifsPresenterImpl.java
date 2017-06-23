@@ -29,7 +29,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     private boolean isTrendingRequest = true;
     private boolean isFirstSearchRequest = true;
-    private boolean mAllPostsDownloaded;
+    private boolean mAllGifsDownloaded;
     private boolean mIsGifsRequestRunning;
 
     private int mOffset;
@@ -115,7 +115,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
                 }
                 mIsGifsRequestRunning = false;
                 if (mOffset >= response.getTotalRecords()) {
-                    mAllPostsDownloaded = true;
+                    mAllGifsDownloaded = true;
                 }
                 isTrendingRequest = false;
             }
@@ -189,7 +189,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     public void onSearchSubmitted(final String query) {
         mOffset = 0;
         isFirstSearchRequest = true;
-        mAllPostsDownloaded = false;
+        mAllGifsDownloaded = false;
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
@@ -201,7 +201,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     @Override
     public void onBottomReached() {
         System.out.println("awooooooo | OnlineGifsPresenterImpl | onBottomReached");
-        if (mAllPostsDownloaded) {
+        if (mAllGifsDownloaded) {
             return;
         } else {
             requestToSearchNewGifs();
