@@ -11,21 +11,27 @@ public interface DatabaseInteractor {
      *
      * @param gif
      */
-    void addGif(Gif gif) throws Exception;
+    void addGif(Gif gif);
 
     /**
      * Remove Gif from the DB
      *
      * @param id    gif unique identifier
      */
-    void removeGif(String id) throws Exception;
+    void removeGif(String id);
 
 
     /**
-     * Retrieve a number of gifs from the DB
+     * Retrieve a specified number of gifs from the given offset
      *
      * @param offset
      */
-    List<Gif> getGifs(int offset) throws Exception;
+    List<Gif> getGifs(int offset);
+
+    /**
+     * Retrieve the numbers of Gifs in the DB
+     *
+     */
+    int getTotalNumberOfGifs();
 
 }

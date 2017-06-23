@@ -49,10 +49,10 @@ public class MockGiphyManager implements GiphyApi {
         ListGifsResponse r = null;
 
         //Fill the List with all Gifs available
-        Gif Gif;
+        Gif gif;
         for (int i = 0; i < TOTAL_SEARCH_RECORDS; i++) {
-            Gif = new Gif(Integer.toString(i), "https://media1.giphy.com/media/5zGPIuq3IOfXG/giphy.gif",false);
-            gifList.add(Gif);
+            gif = new Gif(Integer.toString(i), "https://media1.giphy.com/media/5zGPIuq3IOfXG/giphy.gif",false);
+            gifList.add(gif);
         }
         // Modify the List depending on the offset
         if (offset < gifList.size()) {
@@ -62,7 +62,7 @@ public class MockGiphyManager implements GiphyApi {
             r.setTotalPages(TOTAL_SEARCH_PAGES);
             r.setTotalRecords(TOTAL_SEARCH_RECORDS);
         } else {
-            List<Gif> emptyList = new ArrayList<>();
+            List<gif> emptyList = new ArrayList<>();
             r = new ListGifsResponse(emptyList);
             r.setCode(STATUS_OK);
             r.setTotalPages(0);
@@ -87,10 +87,10 @@ public class MockGiphyManager implements GiphyApi {
         List<Gif> gifList = new ArrayList<>();
 
         //Fill the List with all Gifs available
-        Gif Gif;
+        Gif gif;
         for (int i = 0; i < TOTAL_SEARCH_RECORDS; i++) {
-            Gif = new Gif(Integer.toString(i), "http://i.imgur.com/h5rfQ6V.gif",false);
-            gifList.add(Gif);
+            gif = new Gif(Integer.toString(i), "http://i.imgur.com/h5rfQ6V.gif",false);
+            gifList.add(gif);
         }
         ListGifsResponse r = new ListGifsResponse(gifList);
 

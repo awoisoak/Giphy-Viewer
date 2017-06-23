@@ -9,15 +9,6 @@
               android:orientation="vertical"
               tools:context=".presentation.main.offlinefragment.impl.OfflineGifsFragment">
 
-    <ImageView
-        android:id="@+id/offline_gifs_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="10"
-        android:src="@mipmap/ic_launcher_round"/>
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/offline_gifs_recycler"
         android:layout_width="match_parent"

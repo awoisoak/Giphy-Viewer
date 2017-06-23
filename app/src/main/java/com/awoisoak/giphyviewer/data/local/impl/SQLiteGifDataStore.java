@@ -1,14 +1,11 @@
 package com.awoisoak.giphyviewer.data.local.impl;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.local.GifDataStore;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
-import com.j256.ormlite.android.AndroidDatabaseResults;
-import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -17,7 +14,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-//TODO Create an GifDataStoreException to be the only one throw up by methods in this class?
+//TODO catch all the exceptions here, is an useless mess to throw them up
 public class SQLiteGifDataStore implements GifDataStore{
     private static final String TAG = SQLiteGifDataStore.class.getSimpleName();
     private static final Context sContext = GiphyViewerApplication.getVisorApplication();
@@ -42,10 +39,11 @@ public class SQLiteGifDataStore implements GifDataStore{
      * @param gif
      * @throws Exception
      */
-    public void addGif(Gif gif) throws Exception {
+    public void addGif(Gif gif)  {
         try {
             mGifDao.createIfNotExists(gif);
         } catch (SQLException e) {
+            Log.e(TAG,"SQLException adding a gif to the DB");
             e.printStackTrace();
         }
     }
@@ -56,7 +54,7 @@ public class SQLiteGifDataStore implements GifDataStore{
      * @param gifs
      * @throws Exception
      */
-    public void addGifs(final List<Gif> gifs) throws Exception {
+    public void addGifs(final List<Gif> gifs){
         try {
             mGifDao.callBatchTasks(new Callable<Integer>() {
                 @Override
@@ -67,7 +65,8 @@ public class SQLiteGifDataStore implements GifDataStore{
                     return null;
                 }
             });
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            Log.e(TAG,"Exception adding a gif to the DB");
             e.printStackTrace();
         }
     }
@@ -79,20 +78,25 @@ public class SQLiteGifDataStore implements GifDataStore{
      * @param id    gif unique identifier
      * @throws Exception
      */
-    public void removeGif(String id) throws Exception {
+    public void removeGif(String id)  {
+        try {
             DeleteBuilder<Gif, String> gifDeleteBuilder = mGifDao.deleteBuilder();
             gifDeleteBuilder.where().eq(Gif.ID, id);
             int result = gifDeleteBuilder.delete();
             switch (result) {
                 case 0:
-                    Log.e(TAG,"The gif with id "+id+" couldn't be removed from the database!(Does is exist?)");
+                    Log.e(TAG, "The gif with id " + id + " couldn't be removed from the database!(Does is exist?)");
                     break;
                 case 1:
-                    Log.d(TAG,"The gif with id "+id+" was removed from the database!");
+                    Log.d(TAG, "The gif with id " + id + " was removed from the database!");
                     break;
                 default:
                     throw new Exception("Unknown error: delete returned: " + result);
             }
+        }catch(Exception e){
+            Log.e(TAG,"Error removing Gif from DB");
+            e.printStackTrace();
+        }
     }
 
 
@@ -103,15 +107,16 @@ public class SQLiteGifDataStore implements GifDataStore{
      * @return Gifs List, empty list if no Gif was found
      * @throws UnknownError
      */
-    public List<Gif> getAllGifs()
-            throws Exception {
+    public List<Gif> getAllGifs() {
         try {
             QueryBuilder<Gif, String> queryBuilder = mGifDao.queryBuilder();
             return queryBuilder.query();
             //TODO set a property SAVED_DATE with the timestamp when the gif was stored?
 //            return queryBuilder.orderBy(Gif.SAVED_DATE, false).query();
-        } catch (SQLException e) {
-            throw new Exception("Error retrieving all the Gifs in the DB", e);
+        } catch (Exception e) {
+            Log.e(TAG,"Exception retrieving all gifs from the DB");
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -122,8 +127,7 @@ public class SQLiteGifDataStore implements GifDataStore{
      * @return Gifs List, empty list if no Gif was found
      * @throws UnknownError
      */
-    public List<Gif> getGifs(int offset)
-            throws Exception {
+    public List<Gif> getGifs(int offset) {
         try {
             QueryBuilder<Gif, String> queryBuilder = mGifDao.queryBuilder();
             queryBuilder.offset((long) offset).limit((long) MAX_NUMBER_GIFS_RETURNED);
@@ -132,8 +136,10 @@ public class SQLiteGifDataStore implements GifDataStore{
 //            queryBuilder.orderBy(Gif.SAVED_DATE,false).offset((long) offset).limit(
 //                    (long) MAX_NUMBER_GIFS_RETURNED);
             return mGifDao.query(queryBuilder.prepare());
-        } catch (SQLException e) {
-            throw new Exception("Error retrieving gifs in the DB from offset = " + offset, e);
+        } catch (Exception e) {
+            Log.e(TAG,"Error retrieving gifs in the DB from offset = " + offset);
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -142,8 +148,27 @@ public class SQLiteGifDataStore implements GifDataStore{
      *
      * @throws SQLException
      */
-    public void removeAllGifs() throws Exception {
+    public void removeAllGifs()  {
+        try{
         mDatabaseHelper.deleteAllGifs();
+        } catch (Exception e) {
+            Log.e(TAG,"Error removing all gifs from the DB");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public int getTotalNumberOfGifs(){
+        try {
+            QueryBuilder<Gif, String> queryBuilder = mGifDao.queryBuilder();
+             return queryBuilder.query().size();
+            //TODO set a property SAVED_DATE with the timestamp when the gif was stored?
+            //            return queryBuilder.orderBy(Gif.SAVED_DATE, false).query();
+        } catch (Exception e) {
+            Log.e(TAG,"Error retrieving the total number of gifs in the DB");
+            e.printStackTrace();
+            return -1;
+        }
     }
 
 

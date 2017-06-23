@@ -26,18 +26,23 @@ public class DatabaseInteractorImpl implements DatabaseInteractor {
 
 
     @Override
-    public void addGif(Gif gif) throws Exception {
+    public void addGif(Gif gif)  {
         ds.addGif(gif);
     }
 
     @Override
-    public void removeGif(String id) throws Exception {
+    public void removeGif(String id)  {
         ds.removeGif(id);
     }
 
     @Override
-    public List<Gif> getGifs(int offset) throws Exception {
+    public List<Gif> getGifs(int offset)  {
         return ds.getGifs(offset);
+    }
+
+    @Override
+    public int getTotalNumberOfGifs()  {
+        return ds.getTotalNumberOfGifs();
     }
 
 

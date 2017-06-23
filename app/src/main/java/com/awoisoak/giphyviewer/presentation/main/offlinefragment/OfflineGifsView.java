@@ -16,7 +16,7 @@ public interface OfflineGifsView {
     void bindGifsList(List<Gif> gifs);
 
     /**
-     * Update the adapter with the new gifs received
+     * Update the adapter with the new gifs added/removedd
      * @param gifs
      */
     void updateGifsList(List<Gif> gifs);

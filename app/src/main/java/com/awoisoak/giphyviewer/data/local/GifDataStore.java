@@ -15,7 +15,7 @@ public interface GifDataStore {
      * @param gif
      * @throws Exception
      */
-     void addGif(Gif gif) throws Exception;
+     void addGif(Gif gif);
 
     /**
      * Add a list of gifs to the DB
@@ -23,7 +23,7 @@ public interface GifDataStore {
      * @param gifs
      * @throws Exception
      */
-     void addGifs(final List<Gif> gifs) throws Exception;
+     void addGifs(final List<Gif> gifs);
 
 
     /**
@@ -32,7 +32,7 @@ public interface GifDataStore {
      * @param id gif unique identifier
      * @throws Exception
      */
-     void removeGif(String id) throws Exception;
+     void removeGif(String id);
 
 
     /**
@@ -41,7 +41,7 @@ public interface GifDataStore {
      * @return Gifs List, empty list if no Gif was found
      * @throws UnknownError
      */
-     List<Gif> getAllGifs() throws Exception;
+     List<Gif> getAllGifs();
 
 
     /**
@@ -50,13 +50,19 @@ public interface GifDataStore {
      * @return Gifs List, empty list if no Gif was found
      * @throws UnknownError
      */
-    List<Gif> getGifs(int offset) throws Exception;
+    List<Gif> getGifs(int offset);
 
     /**
      * Remove all gifs
      *
      * @throws SQLException
      */
-    void removeAllGifs() throws Exception;
+    void removeAllGifs() ;
+
+    /**
+     * Retrieve the total number of elements
+     * @return
+     */
+    int getTotalNumberOfGifs();
 
 }

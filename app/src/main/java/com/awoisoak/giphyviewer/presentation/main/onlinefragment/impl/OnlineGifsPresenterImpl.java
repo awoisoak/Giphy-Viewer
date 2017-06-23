@@ -210,7 +210,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public void onGifSetAsFavourite(Gif gif) {
-        System.out.println("awooooooo | OnlineGifsPresenterImpl | onGifSetAsFavourite");
+        System.out.println("awooooooo | OnlineGifsPresenterImpl | onUnsetGifAsFavourite");
     }
 
 

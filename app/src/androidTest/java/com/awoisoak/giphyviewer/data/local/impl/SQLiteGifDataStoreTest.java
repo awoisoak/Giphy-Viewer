@@ -27,25 +27,21 @@ public class SQLiteGifDataStoreTest {
     }
 
     @Test
-    public void addGif() throws Exception {
+    public void addGif() {
         Gif gif = new Gif("666", "http://www.awoisoak.com", false);
-        try {
-            ds.addGif(gif);
-            assertTrue (ds.getAllGifs().size() == 1);
+        ds.addGif(gif);
+        assertTrue (ds.getAllGifs().size() == 1);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Test
-    public void addGifs() throws Exception {
+    public void addGifs()  {
         ds.addGifs(getGifList());
         assertTrue (ds.getAllGifs().size() == LIST_SIZE);
     }
 
     @Test
-    public void removeGif() throws Exception {
+    public void removeGif() {
         ds.addGifs(getGifList());
         assertTrue (ds.getAllGifs().size() == LIST_SIZE);
         ds.removeGif("5");
@@ -54,13 +50,13 @@ public class SQLiteGifDataStoreTest {
     }
 
     @Test
-    public void getAllGifs() throws Exception {
+    public void getAllGifs()  {
         ds.addGifs(getGifList());
         assertTrue (ds.getAllGifs().size() == LIST_SIZE);
     }
 
     @Test
-    public void getGifs() throws Exception {
+    public void getGifs()  {
         ds.addGifs(getLongGifList());
         List<Gif> gifsRetrieved = ds.getGifs(0);
        assertTrue(gifsRetrieved.size() == SQLiteGifDataStore.MAX_NUMBER_GIFS_RETURNED);
@@ -70,7 +66,7 @@ public class SQLiteGifDataStoreTest {
     }
 
     @Test
-    public void removeAllGifs() throws Exception {
+    public void removeAllGifs() {
         ds.addGifs(getGifList());
         ds.removeAllGifs();
         assertTrue(ds.getAllGifs().size() == 0);

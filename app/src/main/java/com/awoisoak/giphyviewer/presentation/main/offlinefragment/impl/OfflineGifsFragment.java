@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.awoisoak.giphyviewer.R;
@@ -37,10 +36,9 @@ import butterknife.ButterKnife;
 public class OfflineGifsFragment extends Fragment implements OfflineGifsView, OfflineGifsAdapter.GifItemClickListener {
 
     @BindView(R.id.offline_gifs_recycler) RecyclerView mRecyclerView;
-    @BindView(R.id.offline_gifs_image) ImageView mImageView;
     public static final String TAG = OfflineGifsFragment.class.getSimpleName();
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final int GRID_COLUMNS = 3;
+    private static final int GRID_COLUMNS = 2;
     private GridLayoutManager mLayoutManager;
     private OfflineGifsAdapter mAdapter;
     @Inject OfflineGifsPresenter mPresenter;
@@ -161,7 +159,8 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
 
     @Override
     public void onFavouriteGifItemClick(Gif gif) {
-        mPresenter.onGifSetAsFavourite(gif);
+        mPresenter.onUnsetGifAsFavourite(gif);
+
     }
 
 }
