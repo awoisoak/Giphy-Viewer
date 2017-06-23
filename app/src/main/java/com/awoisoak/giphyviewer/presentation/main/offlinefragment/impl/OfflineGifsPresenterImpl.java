@@ -1,14 +1,18 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl;
 
 
+import android.database.Cursor;
 import android.util.Log;
 
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.domain.interactors.DatabaseInteractor;
+import com.awoisoak.giphyviewer.presentation.main.MainActivity;
+import com.awoisoak.giphyviewer.presentation.main.VisibleEvent;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsView;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +40,14 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
     public void onCreate() {
         Log.d(TAG, "awooo | onCreate()");
         SignalManagerFactory.getSignalManager().register(this);
-        requestNewGifs();
     }
+
+    @Override
+    public void onDestroy() {
+        SignalManagerFactory.getSignalManager().unregister(this);
+        mView = null;
+    }
+
 
     /**
      * Retrieve the first gifs from the database
@@ -94,9 +104,8 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
     }
 
 
-    @Override
-    public void onDestroy() {
-    }
+
+
 
     @Override
     public void onStart() {
@@ -109,12 +118,49 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
     }
 
     @Override
-    public void onResume() {
+    public void onPause() {
+
+    }
+
+    /**
+     * This method will be called when the fragment is visible for the user
+     *
+     * @param event
+     */
+    @Subscribe
+    public void onVisibleEvent(final VisibleEvent event) {
+        if (event.getPosition()== MainActivity.FAV_TAB){
+            System.out.println("awooooooo | OfflineGifsPresenterImpl | onVisible");
+            requestNewGifs();
+        }
+    }
+
+    @Override
+    public void onAttach() {
 
     }
 
     @Override
-    public void onPause() {
+    public void onCreateView() {
+
+    }
+
+    @Override
+    public void onActivityCreated() {
+
+    }
+
+    @Override
+    public void onResume() {
+    }
+
+    @Override
+    public void onDestroyView() {
+
+    }
+
+    @Override
+    public void onDetach() {
 
     }
 }

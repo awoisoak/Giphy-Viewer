@@ -9,6 +9,8 @@ import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ErrorResponse;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
+import com.awoisoak.giphyviewer.presentation.main.MainActivity;
+import com.awoisoak.giphyviewer.presentation.main.VisibleEvent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
@@ -42,8 +44,18 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     public void onCreate() {
         Log.d(TAG, "awooo | onCreate()");
         SignalManagerFactory.getSignalManager().register(this);
-        requestTrendingGifs();
+    }
 
+    @Override
+    public void onCreateView() {
+        Log.d(TAG, "awooo | onCreateView()");
+        requestTrendingGifs();
+    }
+
+    @Override
+    public void onDestroy() {
+        SignalManagerFactory.getSignalManager().unregister(this);
+        mView = null;
     }
 
     /**
@@ -202,14 +214,40 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
 
+    /**
+     * This method will be called when the fragment is visible for the user
+     *
+     * @param event
+     */
+    @Subscribe
+    public void onVisibleEvent(final VisibleEvent event) {
+        if (event.getPosition()== MainActivity.SEARCH_TAB){
+            System.out.println("awooooooo | OnlineGifsPresenterImpl | onVisible");
+        }
+    }
+
+
     @Override
-    public void onDestroy() {
-        SignalManagerFactory.getSignalManager().unregister(this);
-        mView = null;
+    public void onAttach() {
+
+    }
+
+    @Override
+    public void onActivityCreated() {
+
     }
 
     @Override
     public void onStart() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+    @Override
+    public void onPause() {
 
     }
 
@@ -219,12 +257,12 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
     @Override
-    public void onResume() {
+    public void onDestroyView() {
 
     }
 
     @Override
-    public void onPause() {
+    public void onDetach() {
 
     }
 }

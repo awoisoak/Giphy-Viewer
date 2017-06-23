@@ -47,20 +47,18 @@ import butterknife.ButterKnife;
 
 public class OnlineGifsFragment extends Fragment
         implements OnlineGifsView, SearchView.OnQueryTextListener, OnlineGifsAdapter.GifItemClickListener {
-    public static String TAG = OnlineGifsFragment.class.getSimpleName();
-
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
     @BindView(R.id.online_gifs_progress_bar) ProgressBar mProgressBar;
     @BindView(R.id.online_gifs_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.online_gifs_text_view) TextView mLoadingText;
+    private static final String TAG = OnlineGifsFragment.class.getSimpleName();
+    private static final String ARG_SECTION_NUMBER = "section_number";
     private Snackbar mSnackbar;
     private SearchView mSearchView;
     private LinearLayoutManager mLayoutManager;
-    OnlineGifsAdapter mAdapter;
-    @Inject
-    OnlineGifsPresenter mPresenter;
+    private OnlineGifsAdapter mAdapter;
     private String mQuery;
+    @Inject OnlineGifsPresenter mPresenter;
 
 
     /**
@@ -78,6 +76,8 @@ public class OnlineGifsFragment extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        initDagger();
+        mPresenter.onCreate();
     }
 
     @Override
@@ -88,8 +88,7 @@ public class OnlineGifsFragment extends Fragment
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         addOnScrollListener();
-        initDagger();
-        mPresenter.onCreate();
+        mPresenter.onCreateView();
         return rootView;
     }
 
@@ -97,6 +96,12 @@ public class OnlineGifsFragment extends Fragment
     public void onDestroy() {
         super.onDestroy();
         mPresenter.onDestroy();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        System.out.println("awooooo | OnlineFragment | onHiddenChanged"+hidden);
+        super.onHiddenChanged(hidden);
     }
 
     /**
@@ -176,7 +181,6 @@ public class OnlineGifsFragment extends Fragment
                      * We don't use notifyItemRangeInserted because we keep replicating this known Android bug
                      * https://issuetracker.google.com/issues/37007605
                      */
-                    //mAdapter.notifyItemRangeInserted(mAdapter.getItemCount() - posts.size(), posts.size());
                     mAdapter.notifyDataSetChanged();
                 }
             });
@@ -187,8 +191,7 @@ public class OnlineGifsFragment extends Fragment
 
     @Override
     public void showLoadingSnackbar() {
-        mSnackbar = Snackbar
-                .make(mRecyclerView, getResources().getString(R.string.loading_gifs), Snackbar.LENGTH_INDEFINITE);
+        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_gifs), Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
         mSnackbar.show();
     }
@@ -230,8 +233,11 @@ public class OnlineGifsFragment extends Fragment
         });
     }
 
+
+
     @Override
     public void onFavouriteGifItemClick(Gif gif) {
         mPresenter.onGifSetAsFavourite(gif);
     }
+
 }

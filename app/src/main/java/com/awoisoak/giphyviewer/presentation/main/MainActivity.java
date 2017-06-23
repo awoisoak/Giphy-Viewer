@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsFragment;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl.OfflineGifsFragment;
+import com.awoisoak.giphyviewer.utils.signals.SignalManager;
+import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     //TODO dont allow landscape mode?
     //TODO look for visor,Post,awoisoak,WP strings
     //TODO Review the use of scopes in Dagger
+        //If the scopes are not well configured there is an exception like
+    //Error:(14, 1) error: com.awoisoak.giphyviewer.data.local.dagger.DatabaseComponent scoped with @com.awoisoak.giphyviewer.data.remote.dagger.GiphyApiScope may not reference bindings with different scopes:
+    //@com.awoisoak.giphyviewer.data.local.dagger.DatabaseScope @Provides com.awoisoak.giphyviewer.data.local.GifDataStore com.awoisoak.giphyviewer.data.remote.dagger.DatabaseModule.provideDataStore()
     //TODO why in GifsOnlineComponent only inject GifsOnlineFragment and no GifsOnlinePresenter
     //(this will use the @inject as well as it needs access to the interactor)
     //TODO do we need a 'global' @ApplicationScope ?? maybe use it instead of @GiphyApiScope??
@@ -43,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tabLayout) TabLayout mTabLayout;
     @BindView(R.id.toolbar_title) TextView mToolbarTitle;
 
-    private static final int SEARCH_TAB = 0;
-    private static final int FAV_TAB = 1;
+    public static final int SEARCH_TAB = 0;
+    public static final int FAV_TAB = 1;
     Context mContext = this;
 
     @Override
@@ -73,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
+                SignalManagerFactory.getSignalManager().postEvent(new VisibleEvent(position));
                 switch (position) {
                     case 0:
                         mToolbarTitle.setText("Giphy Viewer");

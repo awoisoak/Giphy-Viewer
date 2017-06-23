@@ -27,4 +27,5 @@ public interface DatabaseInteractor {
      * @param offset
      */
     List<Gif> getGifs(int offset) throws Exception;
+
 }

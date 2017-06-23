@@ -2,6 +2,8 @@ package com.awoisoak.giphyviewer.presentation;
 
 import android.app.Application;
 
+import com.awoisoak.giphyviewer.data.local.dagger.DaggerDatabaseComponent;
+import com.awoisoak.giphyviewer.data.local.dagger.DatabaseComponent;
 import com.awoisoak.giphyviewer.data.remote.dagger.DaggerGiphyApiComponent;
 import com.awoisoak.giphyviewer.data.remote.dagger.GiphyApiComponent;
 
@@ -9,6 +11,7 @@ import dagger.Module;
 
 @Module
 public class GiphyViewerApplication extends Application {
+    private DatabaseComponent mDatabaseComponent;
     private GiphyApiComponent mGiphyApiComponent;
     private static GiphyViewerApplication sGiphyViewerApplication;
 
@@ -20,10 +23,17 @@ public class GiphyViewerApplication extends Application {
         mGiphyApiComponent =
                 DaggerGiphyApiComponent.builder()
                         .applicationModule(new ApplicationModule(getApplicationContext())).build();
+        mDatabaseComponent =
+                DaggerDatabaseComponent.builder()
+                        .applicationModule(new ApplicationModule(getApplicationContext())).build();
     }
 
     public GiphyApiComponent getWPAPIComponent() {
         return mGiphyApiComponent;
+    }
+
+    public DatabaseComponent getDatabaseComponent() {
+        return mDatabaseComponent;
     }
 
 

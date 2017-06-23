@@ -39,4 +39,6 @@ public class DatabaseInteractorImpl implements DatabaseInteractor {
     public List<Gif> getGifs(int offset) throws Exception {
         return ds.getGifs(offset);
     }
+
+
 }

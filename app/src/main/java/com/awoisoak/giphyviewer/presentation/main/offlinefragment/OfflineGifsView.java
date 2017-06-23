@@ -7,10 +7,6 @@ import java.util.List;
 
 public interface OfflineGifsView {
 
-    /**
-     * Hide the initial ProgressBar displayed before the trending gifs are retrieved
-     */
-    void hideProgressBar();
 
     /**
      * Bind the Gifs retrieved.
