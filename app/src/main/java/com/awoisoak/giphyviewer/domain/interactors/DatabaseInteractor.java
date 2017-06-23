@@ -4,7 +4,7 @@ import com.awoisoak.giphyviewer.data.Gif;
 
 import java.util.List;
 
-public interface DataBaseInteractor {
+public interface DatabaseInteractor {
 
     /**
      * Add a Gif into the DB

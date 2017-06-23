@@ -1,4 +1,4 @@
-package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
+package com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

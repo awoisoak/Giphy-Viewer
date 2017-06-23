@@ -3,7 +3,7 @@ package com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger;
 
 import com.awoisoak.giphyviewer.data.remote.dagger.GiphyApiComponent;
 import com.awoisoak.giphyviewer.presentation.ActivityScope;
-import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsFragment;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsFragment;
 
 import dagger.Component;
 

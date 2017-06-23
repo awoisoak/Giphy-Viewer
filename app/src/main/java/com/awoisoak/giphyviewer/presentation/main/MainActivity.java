@@ -13,8 +13,8 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.awoisoak.giphyviewer.R;
-import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsFragment;
-import com.awoisoak.giphyviewer.presentation.main.offlinefragment.PlaceholderFragment2;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsFragment;
+import com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl.OfflineGifsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 case SEARCH_TAB:
                     return OnlineGifsFragment.newInstance(position + 1);
                 case FAV_TAB:
-                    return PlaceholderFragment2.newInstance(position + 1);
+                    return OfflineGifsFragment.newInstance(position + 1);
                 default:
                     Log.e(TAG, "Error position not expected | position " + position);
                     return null;

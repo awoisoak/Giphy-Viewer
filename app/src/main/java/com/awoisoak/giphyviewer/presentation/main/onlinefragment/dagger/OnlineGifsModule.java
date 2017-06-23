@@ -6,7 +6,7 @@ import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
 import com.awoisoak.giphyviewer.domain.interactors.impl.GifsRequestInteractorImpl;
 import com.awoisoak.giphyviewer.presentation.ActivityScope;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
-import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenterImpl;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsPresenterImpl;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
 
 import dagger.Module;

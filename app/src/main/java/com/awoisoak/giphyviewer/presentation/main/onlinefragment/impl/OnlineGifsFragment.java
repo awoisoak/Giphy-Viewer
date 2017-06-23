@@ -1,4 +1,4 @@
-package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
+package com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.DaggerOnlineGifsComponent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.OnlineGifsModule;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
@@ -78,8 +80,6 @@ public class OnlineGifsFragment extends Fragment
         setHasOptionsMenu(true);
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,6 +91,12 @@ public class OnlineGifsFragment extends Fragment
         initDagger();
         mPresenter.onCreate();
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
     }
 
     /**

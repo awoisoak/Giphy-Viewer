@@ -2,7 +2,7 @@ package com.awoisoak.giphyviewer.domain.interactors.impl;
 
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.local.GifDataStore;
-import com.awoisoak.giphyviewer.domain.interactors.DataBaseInteractor;
+import com.awoisoak.giphyviewer.domain.interactors.DatabaseInteractor;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import javax.inject.Inject;
  * (All classes in the Domain layer must be platform independent)
  */
 
-public class DatabaseInteractorImpl implements DataBaseInteractor {
+public class DatabaseInteractorImpl implements DatabaseInteractor {
 
     private GifDataStore ds;
 

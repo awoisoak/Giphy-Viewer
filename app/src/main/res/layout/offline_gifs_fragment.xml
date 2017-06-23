@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
               android:orientation="vertical"
-                tools:context=".presentation.main.offlinefragment.PlaceholderFragment2">
+                tools:context=".presentation.main.offlinefragment.impl.OfflineGifsFragment">
 
 <ImageView
     android:id="@+id/img_intro2"

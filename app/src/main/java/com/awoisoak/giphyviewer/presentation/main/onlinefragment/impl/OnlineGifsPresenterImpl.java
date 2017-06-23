@@ -1,4 +1,4 @@
-package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
+package com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl;
 
 
 import android.util.Log;
@@ -9,6 +9,8 @@ import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ErrorResponse;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
@@ -60,7 +62,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     /**
      * This method will be called when the interactor returns the new gifs
-     * //TODO This will be called for both trending and search gifs. Check whether we should split them
      *
      * @param response
      */
@@ -148,6 +149,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public void onRetryTrendingGifsRequest() {
+        //TODO We need to call this when the trending request fails
         if (!mIsGifsRequestRunning) {
             if (!isFirstSearchRequest) {
                 mView.showLoadingSnackbar();
