@@ -1,10 +1,14 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger;
 
 
+import com.awoisoak.giphyviewer.data.local.GifDataStore;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
+import com.awoisoak.giphyviewer.domain.interactors.DatabaseInteractor;
 import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
+import com.awoisoak.giphyviewer.domain.interactors.impl.DatabaseInteractorImpl;
 import com.awoisoak.giphyviewer.domain.interactors.impl.GifsRequestInteractorImpl;
 import com.awoisoak.giphyviewer.presentation.ActivityScope;
+import com.awoisoak.giphyviewer.presentation.AppScope;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsPresenterImpl;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
@@ -24,6 +28,12 @@ public class OnlineGifsModule {
     @ActivityScope
     GifsRequestInteractor provideGifsRequestInteractor(GiphyApi api) {
         return new GifsRequestInteractorImpl(api);
+    }
+
+    @Provides
+    @ActivityScope
+    DatabaseInteractor provideDatabaseInteractor(GifDataStore ds) {
+        return new DatabaseInteractorImpl(ds);
     }
 
     @Provides

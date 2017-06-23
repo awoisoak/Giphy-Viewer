@@ -2,14 +2,8 @@ package com.awoisoak.giphyviewer.data.remote.dagger;
 
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.local.GifDataStore;
-import com.awoisoak.giphyviewer.data.local.dagger.DatabaseScope;
-import com.awoisoak.giphyviewer.data.local.impl.SQLiteGifDataStore;
 
-import java.sql.SQLException;
 import java.util.List;
-
-import dagger.Module;
-import dagger.Provides;
 
 /**
  *  Mock SQLiteGifDataStore Manager

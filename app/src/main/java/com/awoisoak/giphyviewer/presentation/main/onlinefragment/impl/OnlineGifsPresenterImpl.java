@@ -211,6 +211,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     @Override
     public void onGifSetAsFavourite(Gif gif) {
         System.out.println("awooooooo | OnlineGifsPresenterImpl | onUnsetGifAsFavourite");
+        //TODO use here the databaseinteractor to add/remove a gif from the DB
     }
 
 
@@ -222,6 +223,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     @Subscribe
     public void onVisibleEvent(final VisibleEvent event) {
         if (event.getPosition()== MainActivity.SEARCH_TAB){
+            //TODO check here something?
             System.out.println("awooooooo | OnlineGifsPresenterImpl | onVisible");
         }
     }

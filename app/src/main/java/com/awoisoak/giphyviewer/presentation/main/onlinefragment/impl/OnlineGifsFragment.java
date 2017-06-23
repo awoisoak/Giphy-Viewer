@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
+import com.awoisoak.giphyviewer.data.local.dagger.DatabaseComponent;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
@@ -125,6 +126,7 @@ public class OnlineGifsFragment extends Fragment
 
     private void initDagger() {
         DaggerOnlineGifsComponent.builder()
+                .databaseComponent(((GiphyViewerApplication) getActivity().getApplication()).getDatabaseComponent())
                 .giphyApiComponent(((GiphyViewerApplication) getActivity().getApplication()).getGiphyApiComponent())
                 .onlineGifsModule(new OnlineGifsModule(this))
                 .build().inject(this);

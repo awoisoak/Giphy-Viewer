@@ -10,7 +10,6 @@ import dagger.Provides;
 @Module
 public class GiphyApiModule {
 
-    @GiphyApiScope
     @Provides
     GiphyApi provideGiphyAPI() {
         return MockGiphyManager.getInstance();

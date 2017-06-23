@@ -9,7 +9,7 @@ import dagger.Provides;
 @Module
 public class DatabaseModule {
 
-    @DatabaseScope
+//    @DatabaseScope
     @Provides
     GifDataStore provideDataStore()  {
         return new SQLiteGifDataStore();
