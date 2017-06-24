@@ -4,7 +4,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="225dp"
     android:contextClickable="true"
     android:elevation="50dp"
     android:textAlignment="center"
@@ -24,6 +24,7 @@
         android:layout_height="35dp"
         android:scaleType="centerCrop"
         android:layout_gravity="top|right"
+
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:src="@drawable/ic_grade_white_48dp"

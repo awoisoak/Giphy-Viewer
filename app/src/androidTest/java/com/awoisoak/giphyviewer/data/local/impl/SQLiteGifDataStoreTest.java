@@ -28,7 +28,7 @@ public class SQLiteGifDataStoreTest {
 
     @Test
     public void addGif() {
-        Gif gif = new Gif("666", "http://www.awoisoak.com", false);
+        Gif gif = new Gif("666", "http://www.awoisoak.com");
         ds.addGif(gif);
         assertTrue (ds.getAllGifs().size() == 1);
 
@@ -78,7 +78,7 @@ public class SQLiteGifDataStoreTest {
         List<Gif> list = new ArrayList<>();
         Gif gif;
         for (int i = 0; i < LIST_SIZE; i++) {
-            gif = new Gif(String.valueOf(i), "http://www.awoisoak.com", false);
+            gif = new Gif(String.valueOf(i), "http://www.awoisoak.com");
             list.add(gif);
         }
         return list;
@@ -88,7 +88,7 @@ public class SQLiteGifDataStoreTest {
         List<Gif> list = new ArrayList<>();
         Gif gif;
         for (int i = 0; i < LONG_LIST_SIZE; i++) {
-            gif = new Gif(String.valueOf(i), "http://www.awoisoak.com", false);
+            gif = new Gif(String.valueOf(i), "http://www.awoisoak.com");
             list.add(gif);
         }
         return list;

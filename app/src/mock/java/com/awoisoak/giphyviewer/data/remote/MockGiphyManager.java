@@ -48,7 +48,7 @@ public class MockGiphyManager implements GiphyApi {
         //Fill the List with all Gifs available
         Gif gif;
         for (int i = 0; i < TOTAL_SEARCH_RECORDS; i++) {
-            gif = new Gif(Integer.toString(i), "https://media1.giphy.com/media/5zGPIuq3IOfXG/giphy.gif", false);
+            gif = new Gif(Integer.toString(i), "https://media1.giphy.com/media/5zGPIuq3IOfXG/giphy.gif");
             gifList.add(gif);
         }
         // Modify the List depending on the offset
@@ -84,7 +84,7 @@ public class MockGiphyManager implements GiphyApi {
         //Fill the List with all Gifs available
         Gif gif;
         for (int i = 0; i < TOTAL_TRENDING_RECORDS; i++) {
-            gif = new Gif(Integer.toString(i), "http://i.imgur.com/h5rfQ6V.gif", false);
+            gif = new Gif(Integer.toString(i), "http://i.imgur.com/h5rfQ6V.gif");
             gifList.add(gif);
         }
         ListGifsResponse r = new ListGifsResponse(gifList);
