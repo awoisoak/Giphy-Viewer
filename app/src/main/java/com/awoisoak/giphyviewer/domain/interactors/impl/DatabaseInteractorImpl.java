@@ -31,13 +31,18 @@ public class DatabaseInteractorImpl implements DatabaseInteractor {
     }
 
     @Override
-    public void removeGif(String id)  {
-        ds.removeGif(id);
+    public boolean removeGif(String id)  {
+        return ds.removeGif(id);
     }
 
     @Override
     public List<Gif> getGifs(int offset)  {
         return ds.getGifs(offset);
+    }
+
+    @Override
+    public List<Gif> getAllGifs() {
+        return ds.getAllGifs();
     }
 
     @Override

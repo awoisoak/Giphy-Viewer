@@ -11,15 +11,14 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "gifs")
-
+//TODO remove favourite property?
 public class Gif {
     public final static String ID = "id";
     public final static String URL = "url";
     public final static String FAVORITE = "favorite";
 
-    @DatabaseField(id = true, columnName = ID)
+    @DatabaseField(id = true, columnName = ID, unique = true)
     String id;
-
 
     @DatabaseField(columnName = URL, dataType = DataType.STRING, canBeNull = false)
     String url;

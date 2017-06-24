@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 /**
  * A helper to run {@code Runnable} in different threads (Main thread and UILess ones).
- *
+ * <p>
  * <p>
  * The domain layer should not use this class but the classes in the Presentation layer.
  * The rational is that Threadpool is platform dependant (it uses Handlers and Loopers) and the domain layer should be
@@ -31,6 +31,19 @@ public final class ThreadPool {
             sUiThreadHandler = new Handler(Looper.getMainLooper());
         }
         sUiThreadHandler.post(runnable);
+    }
+
+    /**
+     * Run the {@code Runnable} on the UI main thread with some delay.
+     *
+     * @param runnable the runnable
+     * @param delayMillis the delay in milliseconds
+     */
+    public static void runOnUiThreadDelayed(Runnable runnable, long delayMillis) {
+        if (sUiThreadHandler == null) {
+            sUiThreadHandler = new Handler(Looper.getMainLooper());
+        }
+        sUiThreadHandler.postDelayed(runnable,delayMillis);
     }
 
     /**

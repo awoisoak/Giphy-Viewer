@@ -2,12 +2,14 @@ package com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl;
 
 
 import android.util.Log;
+import android.view.View;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ErrorResponse;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.domain.interactors.DatabaseInteractor;
 import com.awoisoak.giphyviewer.domain.interactors.GifsRequestInteractor;
 import com.awoisoak.giphyviewer.presentation.main.MainActivity;
 import com.awoisoak.giphyviewer.presentation.main.VisibleEvent;
@@ -24,8 +26,10 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     public static String TAG = OnlineGifsPresenterImpl.class.getSimpleName();
 
     private OnlineGifsView mView;
-    private GifsRequestInteractor mInteractor;
+    private GifsRequestInteractor mServerInteractor;
+    private DatabaseInteractor mDatabaseInteractor;
     private List<Gif> mGifs = new ArrayList<>();
+    private List<Gif> mFavouriteGifs = new ArrayList<>();
 
     private boolean isTrendingRequest = true;
     private boolean isFirstSearchRequest = true;
@@ -35,21 +39,25 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     private int mOffset;
 
 
-    public OnlineGifsPresenterImpl(OnlineGifsView view, GifsRequestInteractor interactor) {
+    public OnlineGifsPresenterImpl(OnlineGifsView view, GifsRequestInteractor serverInteractor,
+                                   DatabaseInteractor databaseInteractor) {
         mView = view;
-        mInteractor = interactor;
+        mServerInteractor = serverInteractor;
+        mDatabaseInteractor = databaseInteractor;
     }
 
     @Override
     public void onCreate() {
         Log.d(TAG, "awooo | onCreate()");
         SignalManagerFactory.getSignalManager().register(this);
+
     }
 
     @Override
     public void onCreateView() {
         Log.d(TAG, "awooo | onCreateView()");
         requestTrendingGifs();
+
     }
 
     @Override
@@ -66,7 +74,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
-                mInteractor.getTrendingGifs();
+                mServerInteractor.getTrendingGifs();
             }
         });
     }
@@ -82,7 +90,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
         Log.d(TAG, "@BUS | onGifsReceivedEvent | response | code = " + response.getCode());
 
         if (response.getList().size() == 0) {
-            Log.d(TAG, "onGifsReceivedEvent | no gifs returned with query = "+mView.getSearchText());
+            Log.d(TAG, "onGifsReceivedEvent | no gifs returned with query = " + mView.getSearchText());
             mView.showtoast(((OnlineGifsFragment) mView).getResources().getString(R.string.no_gifs_found));
             return;
         }
@@ -95,7 +103,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
         //Add the new gifs to the array and increase the offset
         mGifs.addAll(response.getList());
 
-        if (!isTrendingRequest){
+        if (!isTrendingRequest) {
             increaseOffset();
         }
 
@@ -143,8 +151,9 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
 
     private void requestToSearchNewGifs() {
-        System.out.println("awoooo | OnlineGifsPresenterImple | requestToSearchNewGifs | mIsGifsRequestRunning="+mIsGifsRequestRunning
-        +"| isFirstSearchRequest = "+isFirstSearchRequest);
+        System.out.println("awoooo | OnlineGifsPresenterImple | requestToSearchNewGifs | mIsGifsRequestRunning=" +
+                                   mIsGifsRequestRunning
+                                   + "| isFirstSearchRequest = " + isFirstSearchRequest);
         if (!mIsGifsRequestRunning) {
             if (!isFirstSearchRequest) {
                 mView.showLoadingSnackbar();
@@ -153,7 +162,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
             ThreadPool.run(new Runnable() {
                 @Override
                 public void run() {
-                    mInteractor.searchGifs(mView.getSearchText(), mOffset);
+                    mServerInteractor.searchGifs(mView.getSearchText(), mOffset);
                 }
             });
         }
@@ -170,7 +179,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
             ThreadPool.run(new Runnable() {
                 @Override
                 public void run() {
-                    mInteractor.getTrendingGifs();
+                    mServerInteractor.getTrendingGifs();
                 }
             });
         }
@@ -193,7 +202,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
-                mInteractor.searchGifs(query, mOffset);
+                mServerInteractor.searchGifs(query, mOffset);
             }
         });
     }
@@ -209,9 +218,36 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
     @Override
-    public void onGifSetAsFavourite(Gif gif) {
-        System.out.println("awooooooo | OnlineGifsPresenterImpl | onUnsetGifAsFavourite");
-        //TODO use here the databaseinteractor to add/remove a gif from the DB
+    public void onGifSetAsFavourite(View v, Gif gif) {
+
+
+        //TODO does the sync method really worth it??
+
+        //TODO implement the ds.addGif to return a boolean as well to make sure that if the sql fails we can rely in the lists
+        synchronized (mFavouriteGifs) {
+            if (!isAlreadyFavourite(gif)) {
+                mDatabaseInteractor.addGif(gif);
+                mFavouriteGifs.add(gif);
+            } else if (mDatabaseInteractor.removeGif(gif.getId())) {
+                mFavouriteGifs.remove(gif);
+            }
+        }
+    }
+
+    @Override
+    public boolean isAlreadyFavourite(Gif gif) {
+        System.out.println("awooooooo | OnlineGifsPresenterImpl | isAlreadyFavourite = true");
+        boolean wasAlreadyFavourite = false;
+        //TODO does the sync method really worth it??
+
+        synchronized (mFavouriteGifs) {
+            for (Gif favGif : mFavouriteGifs) {
+                if (favGif.getId().equals(gif.getId())) {
+                    wasAlreadyFavourite = true;
+                }
+            }
+        }
+        return wasAlreadyFavourite;
     }
 
 
@@ -222,9 +258,13 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
      */
     @Subscribe
     public void onVisibleEvent(final VisibleEvent event) {
-        if (event.getPosition()== MainActivity.SEARCH_TAB){
-            //TODO check here something?
-            System.out.println("awooooooo | OnlineGifsPresenterImpl | onVisible");
+        synchronized (mFavouriteGifs) {
+            if (event.getPosition() == MainActivity.SEARCH_TAB) {
+                System.out.println("awooooooo | OnlineGifsPresenterImpl | onVisible");
+                mFavouriteGifs = mDatabaseInteractor.getAllGifs();
+                // We force the rv to be updated with the possible changes in the offline screen
+                mView.updateGifsList(mGifs);
+            }
         }
     }
 
@@ -246,8 +286,14 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public void onResume() {
-
+        System.out.println("awooooo | OnlineGifsPresenterImpl | onResume");
+        /**
+         * Workaround to detect the very first time the online screen is displayed
+         * (OnPageChangeListener can't detect it)
+         */
+        onVisibleEvent(new VisibleEvent(MainActivity.SEARCH_TAB));
     }
+
     @Override
     public void onPause() {
 

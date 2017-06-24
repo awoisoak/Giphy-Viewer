@@ -26,7 +26,7 @@
         android:layout_gravity="top|right"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:src="@android:drawable/star_big_off"
+        android:src="@drawable/ic_grade_white_48dp"
         />
 
 

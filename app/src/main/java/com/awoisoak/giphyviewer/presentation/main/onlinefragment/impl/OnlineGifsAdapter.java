@@ -1,6 +1,7 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,19 +21,21 @@ import butterknife.ButterKnife;
 public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.GifViewHolder> {
 
     private List<Gif> mGifs;
-    private GifItemClickListener mListener;
+    private GifItemClickListener mClickListener;
+    private FavouriteListener mFavouriteListener;
     private Context mContext;
 
     /**
      * Listener to detect when the user click on a Gif item
      */
     public interface GifItemClickListener {
-        void onFavouriteGifItemClick(Gif Gif);
+        void onFavouriteGifItemClick(View v, Gif gif, int position);
     }
 
-    public OnlineGifsAdapter(List<Gif> gifs, GifItemClickListener listener, Context context) {
+    public OnlineGifsAdapter(List<Gif> gifs, GifItemClickListener clickListener, FavouriteListener favouriteListener, Context context) {
         mGifs = gifs;
-        mListener = listener;
+        mClickListener = clickListener;
+        mFavouriteListener = favouriteListener;
         mContext = context;
     }
 
@@ -67,7 +70,6 @@ public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.Gi
             super(itemView);
             ButterKnife.bind(this, itemView);
             favouriteButton.setOnClickListener(this);
-//            itemView.setOnClickListener(this);
         }
 
         public void bindGif(Gif gif) {
@@ -76,15 +78,24 @@ public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.Gi
             }
 
             Glide.with(mContext).load(gif.getUrl()).into(ivGif);
-
-
-            //TODO ask here if this gif was set as favorite?
-//            favouriteButton.setImageDrawable(Gif.getTitle());
+            chooseFavouriteIcon(gif);
         }
 
         @Override
         public void onClick(View v) {
-            mListener.onFavouriteGifItemClick(mGifs.get(getAdapterPosition()));
+            mClickListener.onFavouriteGifItemClick(v, mGifs.get(getAdapterPosition()), getAdapterPosition());
+        }
+
+        private void chooseFavouriteIcon(Gif gif){
+            Drawable regIcon = mContext.getResources().getDrawable(R.drawable.ic_grade_white_48dp);
+            Drawable favIcon = mContext.getResources().getDrawable(R.drawable.rate_star_big_on_holo_dark);
+
+            if (mFavouriteListener.isFavourite(gif)){
+                favouriteButton.setImageDrawable(favIcon);
+            }else{
+                favouriteButton.setImageDrawable(regIcon);
+            }
+
         }
     }
 }

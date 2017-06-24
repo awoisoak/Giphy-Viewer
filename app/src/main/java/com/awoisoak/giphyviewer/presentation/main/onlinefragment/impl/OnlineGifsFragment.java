@@ -1,5 +1,6 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -14,13 +15,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
-import com.awoisoak.giphyviewer.data.local.dagger.DatabaseComponent;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
@@ -47,7 +48,7 @@ import butterknife.ButterKnife;
  */
 
 public class OnlineGifsFragment extends Fragment
-        implements OnlineGifsView, SearchView.OnQueryTextListener, OnlineGifsAdapter.GifItemClickListener {
+        implements OnlineGifsView, SearchView.OnQueryTextListener, OnlineGifsAdapter.GifItemClickListener, FavouriteListener {
 
     @BindView(R.id.online_gifs_progress_bar) ProgressBar mProgressBar;
     @BindView(R.id.online_gifs_recycler) RecyclerView mRecyclerView;
@@ -94,6 +95,12 @@ public class OnlineGifsFragment extends Fragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.onResume();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mPresenter.onDestroy();
@@ -101,7 +108,7 @@ public class OnlineGifsFragment extends Fragment
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-        System.out.println("awooooo | OnlineFragment | onHiddenChanged"+hidden);
+        System.out.println("awooooo | OnlineFragment | onHiddenChanged" + hidden);
         super.onHiddenChanged(hidden);
     }
 
@@ -164,7 +171,7 @@ public class OnlineGifsFragment extends Fragment
     @Override
     public void bindGifsList(List<Gif> gifs) {
         Log.d(TAG, "awoooooo | OnlineGifsFragment | bindGifList");
-        mAdapter = new OnlineGifsAdapter(gifs, this, getActivity());
+        mAdapter = new OnlineGifsAdapter(gifs, this, this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -191,9 +198,11 @@ public class OnlineGifsFragment extends Fragment
         }
     }
 
+
     @Override
     public void showLoadingSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_gifs), Snackbar.LENGTH_INDEFINITE);
+        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_gifs),
+                                  Snackbar.LENGTH_INDEFINITE);
         mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
         mSnackbar.show();
     }
@@ -236,10 +245,49 @@ public class OnlineGifsFragment extends Fragment
     }
 
 
-
     @Override
-    public void onFavouriteGifItemClick(Gif gif) {
-        mPresenter.onGifSetAsFavourite(gif);
+    public void onFavouriteGifItemClick(View v, Gif gif, int position) {
+        //TODO syncronize this code?
+        mPresenter.onGifSetAsFavourite(v, gif);
+        chooseFavouriteIcon(gif, position);
     }
 
+
+    private void chooseFavouriteIcon(Gif gif, final int position) {
+        Drawable regIcon = getResources().getDrawable(R.drawable.ic_grade_white_48dp);
+        Drawable favIcon = getResources().getDrawable(R.drawable.rate_star_big_on_holo_dark);
+
+        if (isFavourite(gif)) {
+            ((ImageView) mRecyclerView.findViewById(R.id.item_online_gifs_favourite_button)).setImageDrawable(favIcon);
+        } else {
+            ((ImageView) mRecyclerView.findViewById(R.id.item_online_gifs_favourite_button)).setImageDrawable(regIcon);
+        }
+
+
+
+
+//        mRecyclerView.post(new Runnable() {
+//            public void run() {
+//                mAdapter.notifyDataSetChanged();
+//                System.out.println("awooooo | awoisoak | onFavouriteGifItemClick | notifyDataSetChanged finished");
+//
+//            }
+//        });
+
+
+        mRecyclerView.post(new Runnable() {
+            public void run() {
+//                mAdapter.notifyItemChanged(position);
+                mAdapter.notifyDataSetChanged();
+                System.out.println("awooooo | awoisoak | onFavouriteGifItemClick | notifyDataSetChanged finished");
+
+            }
+        });
+
+    }
+
+    @Override
+    public boolean isFavourite(Gif gif) {
+        return mPresenter.isAlreadyFavourite(gif);
+    }
 }

@@ -38,7 +38,7 @@ public class OnlineGifsModule {
 
     @Provides
     @ActivityScope
-    OnlineGifsPresenter provideGifsOnlinePresenter(GifsRequestInteractor interactor) {
-        return new OnlineGifsPresenterImpl(mView, interactor);
+    OnlineGifsPresenter provideGifsOnlinePresenter(GifsRequestInteractor serverInteractor, DatabaseInteractor databaseInteractor) {
+        return new OnlineGifsPresenterImpl(mView, serverInteractor,databaseInteractor);
     }
 }

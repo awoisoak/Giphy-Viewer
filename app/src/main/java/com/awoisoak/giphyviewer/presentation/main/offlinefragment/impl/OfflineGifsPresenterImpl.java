@@ -41,43 +41,6 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
     public void onCreate() {
         Log.d(TAG, "awooo | onCreate()");
         SignalManagerFactory.getSignalManager().register(this);
-        ///////////////////
-        //TODO only for testing
-        try {
-            Gif gif;
-
-            gif = new Gif(Integer.toString(1), "https://media1.giphy.com/media/5zGPIuq3IOfXG/giphy.gif",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(2), "https://media4.giphy.com/media/MuuYIotTu3GG4/200.gif?response_id=594cc8f128668855925445c9",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(3), "https://media2.giphy.com/media/isP4TLqhjm3zq/200.gif?response_id=594cc8f128668855925445c9",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(4), "https://media0.giphy.com/media/E0MM3wqMMCQN2/200.gif?response_id=594cc8f128668855925445c9",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(5), "https://media2.giphy.com/media/isP4TLqhjm3zq/200.gif?response_id=594cc8f128668855925445c9",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(6), "https://media0.giphy.com/media/E0MM3wqMMCQN2/200.gif?response_id=594cc8f128668855925445c9",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(7), "https://media2.giphy.com/media/isP4TLqhjm3zq/200.gif?response_id=594cc8f128668855925445c9",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(8), "https://media0.giphy.com/media/E0MM3wqMMCQN2/200.gif?response_id=594cc8f128668855925445c9",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(9), "https://media2.giphy.com/media/isP4TLqhjm3zq/200.gif?response_id=594ccaa094ba92f87cade4b2",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(10), "https://media0.giphy.com/media/E0MM3wqMMCQN2/200.gif?response_id=594ccaa094ba92f87cade4b2",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(11), "https://media1.giphy.com/media/Mvw4JCwtu0FO/200.gif?response_id=594ccaa094ba92f87cade4b2",false);
-            mInteractor.addGif(gif);
-            gif = new Gif(Integer.toString(12), "https://media4.giphy.com/media/3oz8xQQ7zuKYvbTvXy/200.gif?response_id=594ccaa094ba92f87cade4b2",false);
-            mInteractor.addGif(gif);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        ///////////////////
     }
 
     @Override
@@ -91,12 +54,16 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
      * Retrieve the first gifs from the database
      */
     private void requestNewGifs() {
+        System.out.println("awooooooo | OfflineGifsPresenterImpl | requestNewGifs");
+
         //TODO Make the database request in threads?
+        //TODO we have to difference when the request is done in onVisible or when it's done in onbottomreach?
 
         try {
             List<Gif> gifsRetrieved = mInteractor.getGifs(mOffset);
             if (mOffset == 0 && gifsRetrieved.size() == 0){
-                mView.showtoast("There is no gifs in the DB");
+                mView.bindGifsList(mGifs);
+                mView.showtoast("You haven't add any favourite gif yet");
                 return;
             }
             mGifs.addAll(gifsRetrieved);
@@ -108,7 +75,6 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
             }else {
                 mView.updateGifsList(gifsRetrieved);
             }
-            //TODO somehow request the total records of the database or the cursor adapter will do the job?
             if (mOffset >= mInteractor.getTotalNumberOfGifs()) {
                 mAllGifsRetrieved = true;
             }
@@ -139,9 +105,10 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
     @Override
     public void onUnsetGifAsFavourite(Gif gif) {
         System.out.println("awooooooo | OfflineGifsPresenterImpl | onUnsetGifAsFavourite");
-            mInteractor.removeGif(gif.getId());
-        mGifs.remove(gif);
-        mView.updateGifsList(mGifs);
+        if (mInteractor.removeGif(gif.getId())){
+            mGifs.remove(gif);
+            mView.updateGifsList(mGifs);
+        }
     }
 
 
@@ -172,7 +139,12 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
     public void onVisibleEvent(final VisibleEvent event) {
         if (event.getPosition()== MainActivity.FAV_TAB){
             System.out.println("awooooooo | OfflineGifsPresenterImpl | onVisible");
+            mAllGifsRetrieved = false;
+            isFirstRequest = true;
+            mOffset = 0;
+            mGifs.clear();
             requestNewGifs();
+
         }
     }
 

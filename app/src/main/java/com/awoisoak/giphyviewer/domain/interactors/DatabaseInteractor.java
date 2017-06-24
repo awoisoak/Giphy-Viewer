@@ -16,9 +16,10 @@ public interface DatabaseInteractor {
     /**
      * Remove Gif from the DB
      *
-     * @param id    gif unique identifier
+     * @param id gif unique identifier
+     * @return true if it was removed, false otherwise
      */
-    void removeGif(String id);
+    boolean removeGif(String id);
 
 
     /**
@@ -29,8 +30,12 @@ public interface DatabaseInteractor {
     List<Gif> getGifs(int offset);
 
     /**
+     * Retrieve all gifs in the DB
+     */
+    List<Gif> getAllGifs();
+
+    /**
      * Retrieve the numbers of Gifs in the DB
-     *
      */
     int getTotalNumberOfGifs();
 

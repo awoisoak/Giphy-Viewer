@@ -15,19 +15,19 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 //TODO catch all the exceptions here, is an useless mess to throw them up
-public class SQLiteGifDataStore implements GifDataStore{
+public class SQLiteGifDataStore implements GifDataStore {
     private static final String TAG = SQLiteGifDataStore.class.getSimpleName();
     private static final Context sContext = GiphyViewerApplication.getGiphyViewerApplication();
     private final DatabaseHelper mDatabaseHelper;
     Dao<Gif, String> mGifDao;
 
 
-    public SQLiteGifDataStore()  {
+    public SQLiteGifDataStore() {
         mDatabaseHelper = new DatabaseHelper(sContext);
         try {
             mGifDao = mDatabaseHelper.getGifDao();
         } catch (SQLException e) {
-            Log.e(TAG,"Error retrieving the DAO object from the DB");
+            Log.e(TAG, "Error retrieving the DAO object from the DB");
             e.printStackTrace();
         }
 
@@ -39,11 +39,11 @@ public class SQLiteGifDataStore implements GifDataStore{
      * @param gif
      * @throws Exception
      */
-    public void addGif(Gif gif)  {
+    public void addGif(Gif gif) {
         try {
             mGifDao.createIfNotExists(gif);
         } catch (SQLException e) {
-            Log.e(TAG,"SQLException adding a gif to the DB");
+            Log.e(TAG, "SQLException adding a gif to the DB");
             e.printStackTrace();
         }
     }
@@ -54,7 +54,7 @@ public class SQLiteGifDataStore implements GifDataStore{
      * @param gifs
      * @throws Exception
      */
-    public void addGifs(final List<Gif> gifs){
+    public void addGifs(final List<Gif> gifs) {
         try {
             mGifDao.callBatchTasks(new Callable<Integer>() {
                 @Override
@@ -66,7 +66,7 @@ public class SQLiteGifDataStore implements GifDataStore{
                 }
             });
         } catch (Exception e) {
-            Log.e(TAG,"Exception adding a gif to the DB");
+            Log.e(TAG, "Exception adding a gif to the DB");
             e.printStackTrace();
         }
     }
@@ -75,10 +75,10 @@ public class SQLiteGifDataStore implements GifDataStore{
     /**
      * Remove Gif from the DB
      *
-     * @param id    gif unique identifier
-     * @throws Exception
+     * @param id gif unique identifier
+     * @return true if it was removed, false otherwise
      */
-    public void removeGif(String id)  {
+    public boolean removeGif(String id) {
         try {
             DeleteBuilder<Gif, String> gifDeleteBuilder = mGifDao.deleteBuilder();
             gifDeleteBuilder.where().eq(Gif.ID, id);
@@ -86,19 +86,19 @@ public class SQLiteGifDataStore implements GifDataStore{
             switch (result) {
                 case 0:
                     Log.e(TAG, "The gif with id " + id + " couldn't be removed from the database!(Does is exist?)");
-                    break;
+                    return false;
                 case 1:
                     Log.d(TAG, "The gif with id " + id + " was removed from the database!");
-                    break;
+                    return true;
                 default:
                     throw new Exception("Unknown error: delete returned: " + result);
             }
-        }catch(Exception e){
-            Log.e(TAG,"Error removing Gif from DB");
+        } catch (Exception e) {
+            Log.e(TAG, "Error removing Gif from DB");
             e.printStackTrace();
+            return false;
         }
     }
-
 
 
     /**
@@ -112,9 +112,9 @@ public class SQLiteGifDataStore implements GifDataStore{
             QueryBuilder<Gif, String> queryBuilder = mGifDao.queryBuilder();
             return queryBuilder.query();
             //TODO set a property SAVED_DATE with the timestamp when the gif was stored?
-//            return queryBuilder.orderBy(Gif.SAVED_DATE, false).query();
+            //            return queryBuilder.orderBy(Gif.SAVED_DATE, false).query();
         } catch (Exception e) {
-            Log.e(TAG,"Exception retrieving all gifs from the DB");
+            Log.e(TAG, "Exception retrieving all gifs from the DB");
             e.printStackTrace();
             return null;
         }
@@ -133,11 +133,11 @@ public class SQLiteGifDataStore implements GifDataStore{
             queryBuilder.offset((long) offset).limit((long) MAX_NUMBER_GIFS_RETURNED);
 
             //TODO set a property SAVED_DATE with the timestamp when the gif was stored?
-//            queryBuilder.orderBy(Gif.SAVED_DATE,false).offset((long) offset).limit(
-//                    (long) MAX_NUMBER_GIFS_RETURNED);
+            //            queryBuilder.orderBy(Gif.SAVED_DATE,false).offset((long) offset).limit(
+            //                    (long) MAX_NUMBER_GIFS_RETURNED);
             return mGifDao.query(queryBuilder.prepare());
         } catch (Exception e) {
-            Log.e(TAG,"Error retrieving gifs in the DB from offset = " + offset);
+            Log.e(TAG, "Error retrieving gifs in the DB from offset = " + offset);
             e.printStackTrace();
             return null;
         }
@@ -148,24 +148,24 @@ public class SQLiteGifDataStore implements GifDataStore{
      *
      * @throws SQLException
      */
-    public void removeAllGifs()  {
-        try{
-        mDatabaseHelper.deleteAllGifs();
+    public void removeAllGifs() {
+        try {
+            mDatabaseHelper.deleteAllGifs();
         } catch (Exception e) {
-            Log.e(TAG,"Error removing all gifs from the DB");
+            Log.e(TAG, "Error removing all gifs from the DB");
             e.printStackTrace();
         }
     }
 
     @Override
-    public int getTotalNumberOfGifs(){
+    public int getTotalNumberOfGifs() {
         try {
             QueryBuilder<Gif, String> queryBuilder = mGifDao.queryBuilder();
-             return queryBuilder.query().size();
+            return queryBuilder.query().size();
             //TODO set a property SAVED_DATE with the timestamp when the gif was stored?
             //            return queryBuilder.orderBy(Gif.SAVED_DATE, false).query();
         } catch (Exception e) {
-            Log.e(TAG,"Error retrieving the total number of gifs in the DB");
+            Log.e(TAG, "Error retrieving the total number of gifs in the DB");
             e.printStackTrace();
             return -1;
         }
@@ -174,36 +174,36 @@ public class SQLiteGifDataStore implements GifDataStore{
 
     //TODO set a property SAVED_DATE with the timestamp when the gif was stored?
 
-//    /**
-//     * Retrieve the last gif entry saved in the DB
-//     *
-//     * @return Gifs List, empty list if no Gif was found
-//     * @throws UnknownError
-//     */
-//    public Gif getLastGif() throws Exception {
-//        Dao<Gif, String> mGifDao = mDatabaseHelper.getGifDao();
-//        QueryBuilder<Gif, String> queryBuilder = mGifDao.queryBuilder();
-//        return queryBuilder.orderBy(Gif.SAVED_DATE, false).query().get(0);
-//    }
+    //    /**
+    //     * Retrieve the last gif entry saved in the DB
+    //     *
+    //     * @return Gifs List, empty list if no Gif was found
+    //     * @throws UnknownError
+    //     */
+    //    public Gif getLastGif() throws Exception {
+    //        Dao<Gif, String> mGifDao = mDatabaseHelper.getGifDao();
+    //        QueryBuilder<Gif, String> queryBuilder = mGifDao.queryBuilder();
+    //        return queryBuilder.orderBy(Gif.SAVED_DATE, false).query().get(0);
+    //    }
 
 
-//    /**
-//     * Get a DB cursor
-//     * @return
-//     * @throws SQLException
-//     */
-//    public Object getCursor() throws SQLException {
-//        QueryBuilder<Gif, String> qb = mGifDao.queryBuilder();
-//        qb.query();
-//        CloseableIterator<Gif> iterator = mGifDao.iterator(qb.prepare());
-//        try {
-//            // get the raw results which can be cast under Android
-//            AndroidDatabaseResults results =
-//                    (AndroidDatabaseResults)iterator.getRawResults();
-//            return results.getRawCursor();
-//        } finally {
-//            iterator.closeQuietly();
-//        }
-//    }
+    //    /**
+    //     * Get a DB cursor
+    //     * @return
+    //     * @throws SQLException
+    //     */
+    //    public Object getCursor() throws SQLException {
+    //        QueryBuilder<Gif, String> qb = mGifDao.queryBuilder();
+    //        qb.query();
+    //        CloseableIterator<Gif> iterator = mGifDao.iterator(qb.prepare());
+    //        try {
+    //            // get the raw results which can be cast under Android
+    //            AndroidDatabaseResults results =
+    //                    (AndroidDatabaseResults)iterator.getRawResults();
+    //            return results.getRawCursor();
+    //        } finally {
+    //            iterator.closeQuietly();
+    //        }
+    //    }
 
 }
