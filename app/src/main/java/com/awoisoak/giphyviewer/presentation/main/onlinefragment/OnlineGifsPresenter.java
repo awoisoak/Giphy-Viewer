@@ -9,14 +9,10 @@ import com.awoisoak.giphyviewer.presentation.IFragmentPresenter;
 public interface OnlineGifsPresenter extends IFragmentPresenter {
 
     /**
-     * Called when the user choose to retry a search request which had failed
+     * Called when the user choose to retry a request (trending or search) which had failed
      */
-    void onRetrySearchGifsRequest();
+    void onRetryGifsRequest();
 
-    /**
-     * Called when the user choose to retry the automatic trending request which had failed
-     */
-    void onRetryTrendingGifsRequest();
 
     /**
      * Called when the user submit a new search

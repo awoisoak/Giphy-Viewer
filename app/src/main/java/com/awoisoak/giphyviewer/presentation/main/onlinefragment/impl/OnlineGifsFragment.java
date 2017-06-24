@@ -215,7 +215,7 @@ public class OnlineGifsFragment extends Fragment
             public void onClick(View v) {
                 mSnackbar.dismiss();
                 showLoadingSnackbar();
-                mPresenter.onRetrySearchGifsRequest();
+                mPresenter.onRetryGifsRequest();
             }
         });
         mSnackbar.show();

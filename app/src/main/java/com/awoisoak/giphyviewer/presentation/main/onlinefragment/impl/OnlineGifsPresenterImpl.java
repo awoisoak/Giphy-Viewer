@@ -151,9 +151,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
 
     private void requestToSearchNewGifs() {
-        System.out.println("awoooo | OnlineGifsPresenterImple | requestToSearchNewGifs | mIsGifsRequestRunning=" +
-                                   mIsGifsRequestRunning
-                                   + "| isFirstSearchRequest = " + isFirstSearchRequest);
         if (!mIsGifsRequestRunning) {
             if (!isFirstSearchRequest) {
                 mView.showLoadingSnackbar();
@@ -168,26 +165,15 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
         }
     }
 
-    @Override
-    public void onRetryTrendingGifsRequest() {
-        //TODO We need to call this when the trending request fails
-        if (!mIsGifsRequestRunning) {
-            if (!isFirstSearchRequest) {
-                mView.showLoadingSnackbar();
-            }
-            mIsGifsRequestRunning = true;
-            ThreadPool.run(new Runnable() {
-                @Override
-                public void run() {
-                    mServerInteractor.getTrendingGifs();
-                }
-            });
-        }
-    }
+
 
     @Override
-    public void onRetrySearchGifsRequest() {
-        requestToSearchNewGifs();
+    public void onRetryGifsRequest() {
+        if (isTrendingRequest){
+            requestTrendingGifs();
+        }else{
+            requestToSearchNewGifs();
+        }
     }
 
     public void increaseOffset() {
@@ -220,9 +206,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     @Override
     public void onGifSetAsFavourite(View v, Gif gif) {
 
-
-        //TODO does the sync method really worth it??
-
         //TODO implement the ds.addGif to return a boolean as well to make sure that if the sql fails we can rely in the lists
         synchronized (mFavouriteGifs) {
             if (!isAlreadyFavourite(gif)) {
@@ -238,7 +221,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     public boolean isAlreadyFavourite(Gif gif) {
         System.out.println("awooooooo | OnlineGifsPresenterImpl | isAlreadyFavourite = true");
         boolean wasAlreadyFavourite = false;
-        //TODO does the sync method really worth it??
 
         synchronized (mFavouriteGifs) {
             for (Gif favGif : mFavouriteGifs) {
@@ -286,7 +268,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public void onResume() {
-        System.out.println("awooooo | OnlineGifsPresenterImpl | onResume");
         /**
          * Workaround to detect the very first time the online screen is displayed
          * (OnPageChangeListener can't detect it)
