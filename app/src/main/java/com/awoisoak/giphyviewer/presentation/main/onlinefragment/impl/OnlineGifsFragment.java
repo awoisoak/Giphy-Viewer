@@ -258,8 +258,11 @@ public class OnlineGifsFragment extends Fragment
         Drawable favIcon = getResources().getDrawable(R.drawable.rate_star_big_on_holo_dark);
 
         if (isFavourite(gif)) {
+            System.out.println("awooooo | awoisoak | OnlineGifsFragment |  set blue icon");
             ((ImageView) mRecyclerView.findViewById(R.id.item_online_gifs_favourite_button)).setImageDrawable(favIcon);
         } else {
+            System.out.println("awooooo | awoisoak | OnlineGifsFragment |  set white icon");
+
             ((ImageView) mRecyclerView.findViewById(R.id.item_online_gifs_favourite_button)).setImageDrawable(regIcon);
         }
 
@@ -274,15 +277,19 @@ public class OnlineGifsFragment extends Fragment
 //            }
 //        });
 
+//
+//        mRecyclerView.post(new Runnable() {
+//            public void run() {
+////                mAdapter.notifyItemChanged(position);
+//                mAdapter.notifyDataSetChanged();
+//                System.out.println("awooooo | awoisoak | onFavouriteGifItemClick | notifyDataSetChanged finished");
+//
+//            }
+//        });
 
-        mRecyclerView.post(new Runnable() {
-            public void run() {
-//                mAdapter.notifyItemChanged(position);
-                mAdapter.notifyDataSetChanged();
-                System.out.println("awooooo | awoisoak | onFavouriteGifItemClick | notifyDataSetChanged finished");
+                        System.out.println("awooooo | awoisoak | onFavouriteGifItemClick | notifyDataSetChanged without post");
 
-            }
-        });
+        mAdapter.notifyDataSetChanged();
 
     }
 

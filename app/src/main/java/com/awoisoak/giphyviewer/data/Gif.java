@@ -51,4 +51,12 @@ public class Gif {
         return favorite;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Gif)) {
+            return false;
+        }
+        Gif other = (Gif) o;
+        return id.equals(other.id);
+    }
 }
