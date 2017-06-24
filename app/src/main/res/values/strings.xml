@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Freshworks</string>
-    <string name="search_title">Search title</string>
-    <string name="search_hint">Introduce the gif term to search</string>
+    <string name="app_name">Giphy Viewer</string>
     <string name="loading_gifs">Loading Gifs...</string>
     <string name="error_network_connection">Couldn\'t connect to the server</string>
     <string name="no_gifs_found">No gifs found, please try with a new term</string>
+    <string name="empty_database">You didn\'t add any gif to your favourites</string>
+    <string name="error_retrieving_gifs_from_db">Oops! There was an error retrieving the favourites gifs :-(</string>
 </resources>

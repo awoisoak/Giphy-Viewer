@@ -2,6 +2,7 @@ package com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -68,19 +69,13 @@ public class OfflineGifsAdapter extends RecyclerView.Adapter<OfflineGifsAdapter.
             super(itemView);
             ButterKnife.bind(this, itemView);
             favouriteButton.setOnClickListener(this);
-            //            itemView.setOnClickListener(this);
         }
 
         public void bindGif(Gif gif) {
             if (gif.getUrl().equals("") || gif.getUrl() == null) {
                 ivGif.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_error_black_48dp));
             }
-
             Glide.with(mContext).load(gif.getUrl()).into(ivGif);
-
-
-            //TODO ask here if this gif was set as favorite?
-            //            favouriteButton.setImageDrawable(Gif.getTitle());
         }
 
         @Override

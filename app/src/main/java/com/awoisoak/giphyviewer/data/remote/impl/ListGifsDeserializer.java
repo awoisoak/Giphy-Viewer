@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 /**
  * Specific Deserializer for ListGifsResponse
- * <p>
+ *
  */
 
 
@@ -53,13 +53,11 @@ class ListGifsDeserializer<T extends GiphyResponse> implements JsonDeserializer<
         JsonElement id;
         JsonElement url;
 
-
         for (JsonElement Gif : arrayOfGifs) {
             id = Gif.getAsJsonObject().get(GiphyService.ID);
             url = Gif.getAsJsonObject().get(GiphyService.IMAGES).getAsJsonObject().get(GiphyService.FIXED_HEIGHT)
                     .getAsJsonObject().get(GiphyService.URL);
-            //TODO by default we set the favorite property to false but we will need to check with the DB before display
-            GifsList.add(new Gif(id.getAsString(), url.getAsString(), false));
+            GifsList.add(new Gif(id.getAsString(), url.getAsString()));
         }
         ListGifsResponse r = new ListGifsResponse(GifsList);
         r.setTotalRecords(totalGifs);

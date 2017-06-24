@@ -23,8 +23,8 @@ public class MockSQLiteGifDataStore implements GifDataStore {
     }
 
     @Override
-    public void removeGif(String id) {
-
+    public boolean removeGif(String id) {
+        return false;
     }
 
     @Override

@@ -88,13 +88,6 @@ public class GiphyManager implements GiphyApi {
             Response<T> retrofitResponse = c.execute();
             T response = retrofitResponse.body();
             if (retrofitResponse.isSuccessful()) {
-                //                //TODO in Giphy the totalrecords come in the response. Ignore it?
-                //                String totalPages = retrofitResponse.headers().get(GiphyService.HEADER_TOTAL_PAGES);
-                //                String totalRecords = retrofitResponse.headers().get(GiphyService.HEADER_TOTAL_RECORDS);
-                //                if (totalPages != null && totalRecords != null) {
-                //                    response.setTotalPages(Integer.parseInt(totalPages));
-                //                    response.setTotalRecords(Integer.parseInt(totalRecords));
-                //                }
                 response.setCode(retrofitResponse.code());
                 l.onResponse(response);
             } else {

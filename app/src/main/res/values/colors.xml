@@ -4,13 +4,6 @@
     <color name="cyan_light">#B2EBF2</color>
     <color name="cyan_dark">#00838F</color>
     <color name="cyan">#00BCD4</color>
-
-
-    <color name="yellow">#ffe100</color>
     <color name="white">#FFFFFF</color>
-    <color name="blue_clear">#b6e2f4</color>
     <color name="black">#000000</color>
-    <color name="orange">#ff6f00</color>
-    <color name="green_bright">#33ff00</color>
-    <color name="me">#38b7d4</color>
 </resources>

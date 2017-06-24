@@ -13,7 +13,7 @@ import javax.inject.Inject;
 /**
  * Interactor in charge of communicating with the Giphy server.
  * It must be called in a background thread.
- *
+ * <p>
  * (All classes in the Domain layer must be platform independent)
  */
 public class GifsRequestInteractorImpl implements GifsRequestInteractor {
@@ -43,7 +43,7 @@ public class GifsRequestInteractorImpl implements GifsRequestInteractor {
 
     @Override
     public void getTrendingGifs() {
-        api.trending( new GiphyListener<ListGifsResponse>() {
+        api.trending(new GiphyListener<ListGifsResponse>() {
             @Override
             public void onResponse(ListGifsResponse response) {
                 SignalManagerFactory.getSignalManager().postEvent(response);

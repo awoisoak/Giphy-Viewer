@@ -11,7 +11,9 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-
+/**
+ * Helper to manage the DB
+ */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME    = "gifs.db";
     private static final int    DATABASE_VERSION = 1;

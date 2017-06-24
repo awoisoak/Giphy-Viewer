@@ -34,19 +34,6 @@ public final class ThreadPool {
     }
 
     /**
-     * Run the {@code Runnable} on the UI main thread with some delay.
-     *
-     * @param runnable the runnable
-     * @param delayMillis the delay in milliseconds
-     */
-    public static void runOnUiThreadDelayed(Runnable runnable, long delayMillis) {
-        if (sUiThreadHandler == null) {
-            sUiThreadHandler = new Handler(Looper.getMainLooper());
-        }
-        sUiThreadHandler.postDelayed(runnable,delayMillis);
-    }
-
-    /**
      * Run the {@code Runnable} on a non-UI thread.
      *
      * @param runnable the runnable

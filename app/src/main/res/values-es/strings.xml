@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Giphy Viewer</string>
+    <string name="loading_gifs">Cargando Gifs...</string>
+    <string name="error_network_connection">No se pudo conectar al servidor</string>
+    <string name="no_gifs_found">No se encontraron gifs, prueba con otro término</string>
+    <string name="empty_database">No añadiste aún ningún gif a favoritos</string>
+</resources>

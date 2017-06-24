@@ -2,7 +2,6 @@ package com.awoisoak.giphyviewer.data.local;
 
 import com.awoisoak.giphyviewer.data.Gif;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface GifDataStore {

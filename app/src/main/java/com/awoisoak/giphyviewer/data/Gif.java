@@ -1,7 +1,6 @@
 package com.awoisoak.giphyviewer.data;
 
 
-
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -11,7 +10,6 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "gifs")
-//TODO remove favourite property?
 public class Gif {
     public final static String ID = "id";
     public final static String URL = "url";
@@ -23,18 +21,16 @@ public class Gif {
     @DatabaseField(columnName = URL, dataType = DataType.STRING, canBeNull = false)
     String url;
 
-    @DatabaseField(columnName = FAVORITE, dataType = DataType.BOOLEAN, canBeNull = false)
-    boolean favorite;
 
     /**
      * Need an empty constructor to run the instrumentation test
      */
-    public Gif(){}
+    public Gif() {
+    }
 
-    public Gif(String id, String url, boolean favorite) {
+    public Gif(String id, String url) {
         this.id = id;
         this.url = url;
-        this.favorite = favorite;
     }
 
 
@@ -45,10 +41,6 @@ public class Gif {
 
     public String getUrl() {
         return url;
-    }
-
-    public boolean isFavorite() {
-        return favorite;
     }
 
     @Override

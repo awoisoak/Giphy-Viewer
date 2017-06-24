@@ -16,7 +16,7 @@ public interface GiphyApi {
     int MAX_NUMBER_SEARCH_GIFS_RETURNED = 25;
 
     /**
-     * Max number of records returned for trendings gifs
+     * Max number of records returned for trending gifs
      */
     int MAX_NUMBER_TRENDING_GIFS_RETURNED = 5;
 
@@ -24,7 +24,7 @@ public interface GiphyApi {
      * Search all GIPHY GIFs for a word or phrase.
      * The maximum number of records to return per query is {@link GiphyApi#MAX_NUMBER_SEARCH_GIFS_RETURNED}
      *
-     * @param text, Search query term or phrase.
+     * @param text,   Search query term or phrase.
      * @param offset, An optional results offset. Defaults to 0.
      */
     void search(String text, int offset, GiphyListener<ListGifsResponse> l);
@@ -39,9 +39,5 @@ public interface GiphyApi {
      */
 
     void trending(GiphyListener<ListGifsResponse> l);
-
-
-
-
 
 }

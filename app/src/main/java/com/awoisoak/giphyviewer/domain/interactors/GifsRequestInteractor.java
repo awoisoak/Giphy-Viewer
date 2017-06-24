@@ -12,9 +12,8 @@ public interface GifsRequestInteractor {
 
     /**
      * Fetch GIFs currently trending online.
-     *
+     * <p>
      * Retrieves {@link GiphyApi#MAX_NUMBER_TRENDING_GIFS_RETURNED} gifs
-     *
      */
     void getTrendingGifs();
 }

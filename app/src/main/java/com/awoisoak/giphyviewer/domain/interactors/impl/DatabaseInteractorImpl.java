@@ -10,8 +10,7 @@ import javax.inject.Inject;
 
 /**
  * Interactor in charge of communicating with the Database.
- * //TODO It might be a good idea to call it in a running thread?
- *
+ * <p>
  * (All classes in the Domain layer must be platform independent)
  */
 
@@ -26,17 +25,17 @@ public class DatabaseInteractorImpl implements DatabaseInteractor {
 
 
     @Override
-    public void addGif(Gif gif)  {
+    public void addGif(Gif gif) {
         ds.addGif(gif);
     }
 
     @Override
-    public boolean removeGif(String id)  {
+    public boolean removeGif(String id) {
         return ds.removeGif(id);
     }
 
     @Override
-    public List<Gif> getGifs(int offset)  {
+    public List<Gif> getGifs(int offset) {
         return ds.getGifs(offset);
     }
 
@@ -46,7 +45,7 @@ public class DatabaseInteractorImpl implements DatabaseInteractor {
     }
 
     @Override
-    public int getTotalNumberOfGifs()  {
+    public int getTotalNumberOfGifs() {
         return ds.getTotalNumberOfGifs();
     }
 

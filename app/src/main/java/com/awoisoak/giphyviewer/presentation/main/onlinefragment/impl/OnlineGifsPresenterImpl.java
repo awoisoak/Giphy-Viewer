@@ -48,16 +48,13 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "awooo | onCreate()");
         SignalManagerFactory.getSignalManager().register(this);
 
     }
 
     @Override
     public void onCreateView() {
-        Log.d(TAG, "awooo | onCreateView()");
         requestTrendingGifs();
-
     }
 
     @Override
@@ -90,8 +87,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
         Log.d(TAG, "@BUS | onGifsReceivedEvent | response | code = " + response.getCode());
 
         if (response.getList().size() == 0) {
-            Log.d(TAG, "onGifsReceivedEvent | no gifs returned with query = " + mView.getSearchText());
-            mView.showtoast(((OnlineGifsFragment) mView).getResources().getString(R.string.no_gifs_found));
+            mView.showToast(((OnlineGifsFragment) mView).getResources().getString(R.string.no_gifs_found));
             return;
         }
 
@@ -166,12 +162,11 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
 
-
     @Override
     public void onRetryGifsRequest() {
-        if (isTrendingRequest){
+        if (isTrendingRequest) {
             requestTrendingGifs();
-        }else{
+        } else {
             requestToSearchNewGifs();
         }
     }
@@ -195,7 +190,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public void onBottomReached() {
-        System.out.println("awooooooo | OnlineGifsPresenterImpl | onBottomReached");
         if (mAllGifsDownloaded) {
             return;
         } else {
@@ -219,7 +213,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     @Override
     public boolean isAlreadyFavourite(Gif gif) {
-        System.out.println("awooooooo | OnlineGifsPresenterImpl | isAlreadyFavourite = true");
         boolean wasAlreadyFavourite = false;
 
         synchronized (mFavouriteGifs) {
@@ -242,9 +235,8 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     public void onVisibleEvent(final VisibleEvent event) {
         synchronized (mFavouriteGifs) {
             if (event.getPosition() == MainActivity.SEARCH_TAB) {
-                System.out.println("awooooooo | OnlineGifsPresenterImpl | onVisible");
                 mFavouriteGifs = mDatabaseInteractor.getAllGifs();
-                // We force the rv to be updated with the possible changes in the offline screen
+                // We force the recyclerView to be updated with the possible changes in the offline screen
                 mView.updateGifsList(mGifs);
             }
         }

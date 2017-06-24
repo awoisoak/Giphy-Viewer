@@ -10,7 +10,6 @@ public class ErrorResponse extends GiphyResponse {
 
     public ErrorResponse(String message) {
         this.message = message;
-
     }
 
     public String getMessage() {

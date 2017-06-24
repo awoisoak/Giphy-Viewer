@@ -6,9 +6,9 @@ package com.awoisoak.giphyviewer.utils.signals;
 
 public interface SignalManager {
 
-    public void register(Object object);
+    void register(Object object);
 
-    public void unregister(Object object);
+    void unregister(Object object);
 
-    public void postEvent(Object event);
+    void postEvent(Object event);
 }

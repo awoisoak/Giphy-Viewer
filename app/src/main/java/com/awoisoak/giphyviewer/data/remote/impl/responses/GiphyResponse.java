@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.data.remote.impl.responses;
 
 /**
- *  Giphy Response
+ * Giphy Response
  */
 
 public class GiphyResponse {
@@ -15,7 +15,6 @@ public class GiphyResponse {
     public void setCode(int code) {
         this.code = code;
     }
-
 
     public int getTotalRecords() {
         return totalRecords;

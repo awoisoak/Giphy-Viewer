@@ -83,16 +83,9 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
         mPresenter.onDestroy();
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        System.out.println("awooooo | OfflineFragment | onHiddenChanged"+hidden);
-        super.onHiddenChanged(hidden);
-    }
-
     /**
      * Method to detect when the RecyclerView bottom is reached
      */
-    //TODO will work with GridLayout?
     private void addOnScrollListener() {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -119,7 +112,6 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
 
     @Override
     public void bindGifsList(List<Gif> gifs) {
-        Log.d(TAG, "awoooooo | OfflineGifsFragment | bindGifList");
         mAdapter = new OfflineGifsAdapter(gifs, this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -142,7 +134,7 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
                 }
             });
         } else {
-            Log.d(TAG, "awoooooo | OnlineGifsFragment | updateGifGallery | mAdapter is null!");
+            Log.e(TAG, "updateGifList | mAdapter is null!");
         }
     }
 
@@ -160,7 +152,5 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
     @Override
     public void onFavouriteGifItemClick(Gif gif) {
         mPresenter.onUnsetGifAsFavourite(gif);
-
     }
-
 }

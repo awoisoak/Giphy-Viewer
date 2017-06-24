@@ -16,6 +16,7 @@ public interface OnlineGifsPresenter extends IFragmentPresenter {
 
     /**
      * Called when the user submit a new search
+     *
      * @param query text introduced by the user to be searched
      */
     void onSearchSubmitted(String query);
@@ -27,6 +28,7 @@ public interface OnlineGifsPresenter extends IFragmentPresenter {
 
     /**
      * Called when the user set/unset as favourite one of the gifs
+     *
      * @param v
      * @param gif
      */
@@ -34,6 +36,7 @@ public interface OnlineGifsPresenter extends IFragmentPresenter {
 
     /**
      * Called when the view needs to know whether a gif is saved in the DB
+     *
      * @param gif
      * @return boolean  true if the gif is currently saved in the DB, false otherwise
      */
