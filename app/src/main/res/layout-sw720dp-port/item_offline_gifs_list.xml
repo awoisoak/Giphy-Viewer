@@ -4,14 +4,14 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="300dp"
     android:contextClickable="true"
     android:elevation="50dp"
     android:textAlignment="center"
 >
 
     <ImageView
-        android:id="@+id/item_online_gif_image"
+        android:id="@+id/item_offline_gif_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
@@ -19,16 +19,18 @@
         />
 
     <ImageView
-        android:id="@+id/item_online_gifs_favourite_button"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:id="@+id/item_offline_gifs_favourite_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:scaleType="centerCrop"
         android:layout_gravity="top|right"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:src="@drawable/ic_grade_white_48dp"
+        android:src="@drawable/rate_star_big_on_holo_dark"
+
         />
 
+    <!--android:src="@android:drawable/btn_star_big_on"-->
 
 
 </android.support.v7.widget.CardView>
