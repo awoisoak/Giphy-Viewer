@@ -17,9 +17,9 @@ public interface DatabaseInteractor {
      * Remove Gif from the DB
      *
      * @param id gif unique identifier
-     * @return true if it was removed, false otherwise
+     * @return 1 if removed, 0 otherwise
      */
-    boolean removeGif(String id);
+    int removeGif(String id);
 
 
     /**

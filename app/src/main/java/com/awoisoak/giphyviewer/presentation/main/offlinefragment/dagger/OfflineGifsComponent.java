@@ -1,14 +1,14 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger;
 
 
-import com.awoisoak.giphyviewer.data.local.dagger.DatabaseComponent;
+import com.awoisoak.giphyviewer.data.RepositoryComponent;
 import com.awoisoak.giphyviewer.presentation.ActivityScope;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl.OfflineGifsFragment;
 
 import dagger.Component;
 
 @ActivityScope
-@Component(dependencies = DatabaseComponent.class, modules = OfflineGifsModule.class)
+@Component(dependencies = RepositoryComponent.class, modules = OfflineGifsModule.class)
 public interface OfflineGifsComponent {
     /**
      * It will inject the GifsOfflinePresenter returned in GifsOfflineModule

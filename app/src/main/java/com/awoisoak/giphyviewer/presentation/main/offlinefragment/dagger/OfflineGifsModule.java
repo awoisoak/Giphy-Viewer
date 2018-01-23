@@ -1,6 +1,7 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger;
 
 
+import com.awoisoak.giphyviewer.data.Repository;
 import com.awoisoak.giphyviewer.data.local.GifDataStore;
 import com.awoisoak.giphyviewer.domain.interactors.DatabaseInteractor;
 import com.awoisoak.giphyviewer.domain.interactors.impl.DatabaseInteractorImpl;
@@ -22,8 +23,8 @@ public class OfflineGifsModule {
 
     @Provides
     @ActivityScope
-    DatabaseInteractor provideDatabaseInteractor(GifDataStore ds) {
-        return new DatabaseInteractorImpl(ds);
+    DatabaseInteractor provideDatabaseInteractor(Repository repository) {
+        return new DatabaseInteractorImpl(repository);
     }
 
     @Provides

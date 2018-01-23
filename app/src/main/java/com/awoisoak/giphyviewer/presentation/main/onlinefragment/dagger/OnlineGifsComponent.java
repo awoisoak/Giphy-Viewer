@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger;
 
 
-import com.awoisoak.giphyviewer.data.local.dagger.DatabaseComponent;
+import com.awoisoak.giphyviewer.data.RepositoryComponent;
 import com.awoisoak.giphyviewer.data.remote.dagger.GiphyApiComponent;
 import com.awoisoak.giphyviewer.presentation.ActivityScope;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifsFragment;
@@ -9,7 +9,7 @@ import com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl.OnlineGifs
 import dagger.Component;
 
 @ActivityScope
-@Component(dependencies = {GiphyApiComponent.class, DatabaseComponent.class}, modules = OnlineGifsModule.class)
+@Component(dependencies = {GiphyApiComponent.class, RepositoryComponent.class}, modules = OnlineGifsModule.class)
 public interface OnlineGifsComponent {
     /**
      * It will inject the GifsOnlinePresenter returned in GifsOnlineModule

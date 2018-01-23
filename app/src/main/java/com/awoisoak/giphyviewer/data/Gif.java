@@ -1,30 +1,36 @@
 package com.awoisoak.giphyviewer.data;
 
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.Room;
+import android.support.annotation.NonNull;
+
 
 /**
  * Gif Object
  */
-
-@DatabaseTable(tableName = "gifs")
+//TODO set id as an index?
+@Entity(tableName = "gifs",indices = {@Index(value = {"id"}, unique = true)})
 public class Gif {
-    public final static String ID = "id";
     public final static String URL = "url";
     public final static String FAVORITE = "favorite";
 
-    @DatabaseField(id = true, columnName = ID, unique = true)
+    /**
+     * Makes sure the id is the primary key (ensures uniqueness)
+     */
+    @PrimaryKey
+    @NonNull
     String id;
-
-    @DatabaseField(columnName = URL, dataType = DataType.STRING, canBeNull = false)
     String url;
 
 
     /**
      * Need an empty constructor to run the instrumentation test
      */
+    @Ignore
     public Gif() {
     }
 

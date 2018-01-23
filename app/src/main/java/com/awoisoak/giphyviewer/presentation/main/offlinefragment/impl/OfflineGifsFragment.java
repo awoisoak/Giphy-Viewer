@@ -104,16 +104,23 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
 
     private void initDagger() {
         DaggerOfflineGifsComponent.builder()
-                .databaseComponent(((GiphyViewerApplication) getActivity().getApplication()).getDatabaseComponent())
+                .repositoryComponent(((GiphyViewerApplication) getActivity().getApplication()).getRepositoryComponent())
                 .offlineGifsModule(new OfflineGifsModule(this))
                 .build().inject(this);
     }
 
 
     @Override
-    public void bindGifsList(List<Gif> gifs) {
-        mAdapter = new OfflineGifsAdapter(gifs, this, getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+    public void bindGifsList(final List<Gif> gifs) {
+        final OfflineGifsFragment f = this;
+        ThreadPool.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter = new OfflineGifsAdapter(gifs, f, getActivity());
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
+
     }
 
     @Override

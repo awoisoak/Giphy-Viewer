@@ -127,7 +127,7 @@ public class OnlineGifsFragment extends Fragment
 
     private void initDagger() {
         DaggerOnlineGifsComponent.builder()
-                .databaseComponent(((GiphyViewerApplication) getActivity().getApplication()).getDatabaseComponent())
+                .repositoryComponent(((GiphyViewerApplication) getActivity().getApplication()).getRepositoryComponent())
                 .giphyApiComponent(((GiphyViewerApplication) getActivity().getApplication()).getGiphyApiComponent())
                 .onlineGifsModule(new OnlineGifsModule(this))
                 .build().inject(this);

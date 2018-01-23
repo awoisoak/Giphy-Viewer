@@ -30,6 +30,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     private DatabaseInteractor mDatabaseInteractor;
     private List<Gif> mGifs = new ArrayList<>();
     private List<Gif> mFavouriteGifs = new ArrayList<>();
+    private static final Object LOCK = new Object();
 
     private boolean isTrendingRequest = true;
     private boolean isFirstSearchRequest = true;
@@ -40,7 +41,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
 
     public OnlineGifsPresenterImpl(OnlineGifsView view, GifsRequestInteractor serverInteractor,
-                                   DatabaseInteractor databaseInteractor) {
+            DatabaseInteractor databaseInteractor) {
         mView = view;
         mServerInteractor = serverInteractor;
         mDatabaseInteractor = databaseInteractor;
@@ -79,15 +80,14 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     /**
      * This method will be called when the interactor returns the new gifs
-     *
-     * @param response
      */
     @Subscribe
     public void onGifsReceivedEvent(final ListGifsResponse response) {
         Log.d(TAG, "@BUS | onGifsReceivedEvent | response | code = " + response.getCode());
 
         if (response.getList().size() == 0) {
-            mView.showToast(((OnlineGifsFragment) mView).getResources().getString(R.string.no_gifs_found));
+            mView.showToast(
+                    ((OnlineGifsFragment) mView).getResources().getString(R.string.no_gifs_found));
             return;
         }
 
@@ -128,8 +128,6 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     /**
      * This method will be called when the interactor returns an error trying to get the new gifs
-     *
-     * @param response
      */
     @Subscribe
     public void onErrorRetrievingGifsEvent(ErrorResponse response) {
@@ -198,16 +196,24 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     }
 
     @Override
-    public void onGifSetAsFavourite(View v, Gif gif) {
+    public void onGifSetAsFavourite(View v, final Gif gif) {
 
-        //TODO implement the ds.addGif to return a boolean as well to make sure that if the sql fails we can rely in the lists
-        synchronized (mFavouriteGifs) {
-            if (!isAlreadyFavourite(gif)) {
-                mDatabaseInteractor.addGif(gif);
-                mFavouriteGifs.add(gif);
-            } else if (mDatabaseInteractor.removeGif(gif.getId())) {
-                mFavouriteGifs.remove(gif);
+        //TODO implement the ds.addGif to return a boolean as well to make sure that if the sql
+        // fails we can rely in the lists
+        synchronized (LOCK) {
+
+            ThreadPool.run(new Runnable() {
+            @Override
+            public void run() {
+                if (!isAlreadyFavourite(gif)) {
+                    mDatabaseInteractor.addGif(gif);
+                    mFavouriteGifs.add(gif);
+                } else if (mDatabaseInteractor.removeGif(gif.getId()) > 0) {
+                    mFavouriteGifs.remove(gif);
+                }
             }
+        });
+
         }
     }
 
@@ -215,7 +221,7 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
     public boolean isAlreadyFavourite(Gif gif) {
         boolean wasAlreadyFavourite = false;
 
-        synchronized (mFavouriteGifs) {
+        synchronized (LOCK) {
             for (Gif favGif : mFavouriteGifs) {
                 if (favGif.getId().equals(gif.getId())) {
                     wasAlreadyFavourite = true;
@@ -228,16 +234,26 @@ public class OnlineGifsPresenterImpl implements OnlineGifsPresenter {
 
     /**
      * This method will be called when the fragment is visible for the user
-     *
-     * @param event
      */
     @Subscribe
     public void onVisibleEvent(final VisibleEvent event) {
-        synchronized (mFavouriteGifs) {
+        synchronized (LOCK) {
             if (event.getPosition() == MainActivity.SEARCH_TAB) {
-                mFavouriteGifs = mDatabaseInteractor.getAllGifs();
-                // We force the recyclerView to be updated with the possible changes in the offline screen
-                mView.updateGifsList(mGifs);
+                ThreadPool.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        mFavouriteGifs = mDatabaseInteractor.getAllGifs();
+
+                        ThreadPool.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // We force the recyclerView to be updated with the possible
+                                // changes in the offline screen
+                                mView.updateGifsList(mGifs);
+                            }
+                        });
+                    }
+                });
             }
         }
     }

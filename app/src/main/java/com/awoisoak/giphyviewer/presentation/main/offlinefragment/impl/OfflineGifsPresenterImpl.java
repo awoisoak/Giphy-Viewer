@@ -13,6 +13,7 @@ import com.awoisoak.giphyviewer.presentation.main.VisibleEvent;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsView;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
+import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -52,30 +53,37 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
      * Retrieve the first gifs from the database
      */
     private void requestNewGifs() {
-        try {
-            List<Gif> gifsRetrieved = mInteractor.getGifs(mOffset);
-            if (mOffset == 0 && gifsRetrieved.size() == 0) {
-                mView.bindGifsList(mGifs);
-                mView.showtoast(((Fragment) mView).getString(R.string.empty_database));
-                return;
-            }
-            mGifs.addAll(gifsRetrieved);
-            increaseOffset();
+        ThreadPool.run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<Gif> gifsRetrieved = mInteractor.getGifs(mOffset);
+                    if (mOffset == 0 && gifsRetrieved.size() == 0) {
+                        mView.bindGifsList(mGifs);
+                        mView.showtoast(((Fragment) mView).getString(R.string.empty_database));
+                        return;
+                    }
+                    mGifs.addAll(gifsRetrieved);
+                    increaseOffset();
 
-            if (isFirstRequest) {
-                mView.bindGifsList(mGifs);
-                isFirstRequest = false;
-            } else {
-                mView.updateGifsList(gifsRetrieved);
-            }
-            if (mOffset >= mInteractor.getTotalNumberOfGifs()) {
-                mAllGifsRetrieved = true;
-            }
+                    if (isFirstRequest) {
+                        mView.bindGifsList(mGifs);
+                        isFirstRequest = false;
+                    } else {
+                        mView.updateGifsList(gifsRetrieved);
+                    }
+                    if (mOffset >= mInteractor.getTotalNumberOfGifs()) {
+                        mAllGifsRetrieved = true;
+                    }
 
-        } catch (Exception e) {
-            Log.e(TAG, "Exception trying to retrieve new gifs with offset = " + mOffset);
-            mView.showtoast(((Fragment) mView).getString(R.string.error_retrieving_gifs_from_db));
-        }
+                }catch (Exception e) {
+                    Log.e(TAG, "Exception trying to retrieve new gifs with offset = " + mOffset);
+                    e.printStackTrace();
+                    mView.showtoast(((Fragment) mView).getString(R.string.error_retrieving_gifs_from_db));
+                }
+            }
+        });
+
     }
 
 
@@ -94,17 +102,21 @@ public class OfflineGifsPresenterImpl implements OfflineGifsPresenter {
     }
 
     @Override
-    public void onUnsetGifAsFavourite(Gif gif) {
-        if (mInteractor.removeGif(gif.getId())) {
-            mGifs.remove(gif);
-            mView.updateGifsList(mGifs);
-        }
+    public void onUnsetGifAsFavourite(final Gif gif) {
+        ThreadPool.run(new Runnable() {
+            @Override
+            public void run() {
+                if (mInteractor.removeGif(gif.getId()) > 0) {
+                    mGifs.remove(gif);
+                    mView.updateGifsList(mGifs);
+                }
+            }
+        });
+
     }
 
     /**
      * This method will be called when the fragment is visible for the user
-     *
-     * @param event
      */
     @Subscribe
     public void onVisibleEvent(final VisibleEvent event) {

@@ -1,15 +1,22 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "com.awoisoak.giphyviewer"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //To export the Room DB Schemas
+        //https://stackoverflow.com/questions/44322178/room-schema-export-directory-is-not-provided-to-the-annotation-processor-so-we
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -31,6 +38,11 @@ android {
             dimension "default"
         }
     }
+
+    lintOptions {
+//        checkReleaseBuilds false
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -38,10 +50,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     testCompile 'junit:junit:4.12'
-
 
     //Support libraries
     compile 'com.android.support:appcompat-v7:' + SUPPORT_LIBRARY_VERSION
@@ -58,17 +69,18 @@ dependencies {
     compile 'com.jakewharton:butterknife:' + BUTTER_KNIFE_VERSION
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + BUTTER_KNIFE_VERSION
 
-//    //Glide
+    //Glide
     compile 'com.github.bumptech.glide:glide:' + GLIDE_VERSION
 
-//    //Dagger
+    //Dagger
     compile group: "com.google.dagger", name: "dagger", version: DAGGER_VERSION
     annotationProcessor "com.google.dagger:dagger-compiler:" + DAGGER_VERSION
 
-//    //Otto
+    //Otto
     compile 'com.squareup:otto:' + OTTO_VERSION
 
-//    // ORMLite
-    compile 'com.j256.ormlite:ormlite-android:' + ORM_LITE
+    //Room
+    compile "android.arch.persistence.room:runtime:" + ROOM
+    annotationProcessor "android.arch.persistence.room:compiler:" + ROOM
 
 }

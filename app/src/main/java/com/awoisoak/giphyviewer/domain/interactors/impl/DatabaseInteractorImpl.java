@@ -1,8 +1,10 @@
 package com.awoisoak.giphyviewer.domain.interactors.impl;
 
 import com.awoisoak.giphyviewer.data.Gif;
+import com.awoisoak.giphyviewer.data.Repository;
 import com.awoisoak.giphyviewer.data.local.GifDataStore;
 import com.awoisoak.giphyviewer.domain.interactors.DatabaseInteractor;
+import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
 
 import java.util.List;
 
@@ -16,37 +18,38 @@ import javax.inject.Inject;
 
 public class DatabaseInteractorImpl implements DatabaseInteractor {
 
-    private GifDataStore ds;
+    private Repository repository;
 
     @Inject
-    public DatabaseInteractorImpl(GifDataStore ds) {
-        this.ds = ds;
+    public DatabaseInteractorImpl(Repository repository) {
+        this.repository = repository;
     }
 
 
     @Override
-    public void addGif(Gif gif) {
-        ds.addGif(gif);
+    public void addGif(final Gif gif) {
+        repository.addGif(gif);
+
     }
 
     @Override
-    public boolean removeGif(String id) {
-        return ds.removeGif(id);
+    public int removeGif(final String id) {
+        return repository.removeGif(id);
     }
 
     @Override
     public List<Gif> getGifs(int offset) {
-        return ds.getGifs(offset);
+        return repository.getGifs(offset);
     }
 
     @Override
     public List<Gif> getAllGifs() {
-        return ds.getAllGifs();
+        return repository.getAllGifs();
     }
 
     @Override
     public int getTotalNumberOfGifs() {
-        return ds.getTotalNumberOfGifs();
+        return repository.getTotalNumberOfGifs();
     }
 
 
