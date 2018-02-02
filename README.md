@@ -20,13 +20,15 @@ Implementation details:
 - Two flavors were added: mock & prod (@see app/build.gradle) in order to be able to build an app which aims to a mock server (@see MockGiphyManager) and to a mock datastore (@see MockSQLiteGifDataStore)
 
 
+
+
 **MVP branch**
 
 Implements an [MVP](https://github.com/googlesamples/android-architecture) pattern using concepts of the [Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html).
 
 **Master Branch** 
 
-(Work on process...)
+(Work in progress...)
 I am currently migrating the code to an MVVM pattern using the new [Android Architecture Components](https://developer.android.com/topic/libraries/architecture/index.html):
 - [Room](https://developer.android.com/topic/libraries/architecture/room.html)
 - [Livedata](https://developer.android.com/topic/libraries/architecture/livedata.html)
