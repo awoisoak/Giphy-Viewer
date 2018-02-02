@@ -1,5 +1,7 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,9 +16,11 @@ import android.widget.Toast;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
+import com.awoisoak.giphyviewer.data.local.LocalRepository;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
-import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsView;
+import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineViewModel;
+import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineViewModelFactory;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger.DaggerOfflineGifsComponent;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger.OfflineGifsModule;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
@@ -33,15 +37,20 @@ import butterknife.ButterKnife;
  * Req:
  * - Contains a recycler view that displays a grid of favourite gifs stored locally.
  */
-public class OfflineGifsFragment extends Fragment implements OfflineGifsView, OfflineGifsAdapter.GifItemClickListener {
+public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
+        OfflineGifsAdapter.GifItemClickListener {
 
-    @BindView(R.id.offline_gifs_recycler) RecyclerView mRecyclerView;
+    @BindView(R.id.offline_gifs_recycler)
+    RecyclerView mRecyclerView;
     public static final String TAG = OfflineGifsFragment.class.getSimpleName();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int GRID_COLUMNS = 2;
     private GridLayoutManager mLayoutManager;
     private OfflineGifsAdapter mAdapter;
-    @Inject OfflineGifsPresenter mPresenter;
+    OfflineViewModel mOfflineViewModel;
+    @Inject
+    LocalRepository mLocalRepository;
+    private boolean isFirstRequest = true;
 
     public OfflineGifsFragment() {
     }
@@ -61,18 +70,44 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initDagger();
-        mPresenter.onCreate();
+        initViewModel();
+        observeData();
+    }
+
+    private void initViewModel() {
+        mOfflineViewModel = ViewModelProviders.of(this,
+                new OfflineViewModelFactory(mLocalRepository)).get(OfflineViewModel.class);
+    }
+
+    private void observeData() {
+        mOfflineViewModel.getGifs().observe(this, new Observer<List<Gif>>() {
+            @Override
+            public void onChanged(@Nullable List<Gif> gifsRetrieved) {
+                if (/*mOffset == 0 && */gifsRetrieved== null || gifsRetrieved.size() == 0) {
+//                    bindGifsList(gifsRetrieved);//TODO when the last item is removed we might have to trigger this
+                    showtoast(getString(R.string.empty_database));
+                    return;
+                }
+
+                if (isFirstRequest) {
+                    bindGifsList(gifsRetrieved);
+                    isFirstRequest = false;
+                } else {
+                    updateGifsList(gifsRetrieved);
+                }
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.offline_gifs_fragment, container, false);
         ButterKnife.bind(this, rootView);
-        mLayoutManager = new GridLayoutManager(getActivity(), GRID_COLUMNS, LinearLayoutManager.VERTICAL, false);
+        mLayoutManager = new GridLayoutManager(getActivity(), GRID_COLUMNS,
+                LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
         addOnScrollListener();
-        mPresenter.onCreateView();
         return rootView;
     }
 
@@ -80,7 +115,6 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.onDestroy();
     }
 
     /**
@@ -95,7 +129,7 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
                 int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                     if (!mRecyclerView.canScrollVertically(1)) {
-                        mPresenter.onBottomReached();
+                        mOfflineViewModel.onBottomReached();
                     }
                 }
             }
@@ -104,7 +138,9 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
 
     private void initDagger() {
         DaggerOfflineGifsComponent.builder()
-                .repositoryComponent(((GiphyViewerApplication) getActivity().getApplication()).getRepositoryComponent())
+                .localRepositoryComponent(
+                        ((GiphyViewerApplication) getActivity().getApplication())
+                                .getLocalRepositoryComponent())
                 .offlineGifsModule(new OfflineGifsModule(this))
                 .build().inject(this);
     }
@@ -129,12 +165,14 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
         if (mAdapter != null) {
             /**
              * We execute like this because of the next bug
-             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method-in-a-scroll-callback-recyclerview-v724-2
+             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method
+             * -in-a-scroll-callback-recyclerview-v724-2
              */
             mRecyclerView.post(new Runnable() {
                 public void run() {
                     /**
-                     * We don't use notifyItemRangeInserted because we keep replicating this known Android bug
+                     * We don't use notifyItemRangeInserted because we keep replicating this
+                     * known Android bug
                      * https://issuetracker.google.com/issues/37007605
                      */
                     mAdapter.notifyDataSetChanged();
@@ -158,6 +196,6 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView, Of
 
     @Override
     public void onFavouriteGifItemClick(Gif gif) {
-        mPresenter.onUnsetGifAsFavourite(gif);
+        mOfflineViewModel.onUnsetGifAsFavourite(gif);
     }
 }

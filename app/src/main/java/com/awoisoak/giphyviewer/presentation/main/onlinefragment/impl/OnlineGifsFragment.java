@@ -1,5 +1,7 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment.impl;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,9 +24,13 @@ import android.widget.Toast;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
+import com.awoisoak.giphyviewer.data.Resource;
+import com.awoisoak.giphyviewer.data.local.LocalRepository;
+import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
-import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModel;
+import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModelFactory;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.DaggerOnlineGifsComponent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.OnlineGifsModule;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
@@ -48,11 +54,15 @@ import butterknife.ButterKnife;
  */
 
 public class OnlineGifsFragment extends Fragment
-        implements OnlineGifsView, SearchView.OnQueryTextListener, OnlineGifsAdapter.GifItemClickListener, FavouriteListener {
+        implements OnlineGifsView, SearchView.OnQueryTextListener,
+        OnlineGifsAdapter.GifItemClickListener, FavouriteListener {
 
-    @BindView(R.id.online_gifs_progress_bar) ProgressBar mProgressBar;
-    @BindView(R.id.online_gifs_recycler) RecyclerView mRecyclerView;
-    @BindView(R.id.online_gifs_text_view) TextView mLoadingText;
+    @BindView(R.id.online_gifs_progress_bar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.online_gifs_recycler)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.online_gifs_text_view)
+    TextView mLoadingText;
     private static final String TAG = OnlineGifsFragment.class.getSimpleName();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private Snackbar mSnackbar;
@@ -60,7 +70,14 @@ public class OnlineGifsFragment extends Fragment
     private LinearLayoutManager mLayoutManager;
     private OnlineGifsAdapter mAdapter;
     private String mQuery;
-    @Inject OnlineGifsPresenter mPresenter;
+    private boolean isFirstSearchRequest = true;
+
+
+    OnlineViewModel mOnlineViewModel;
+    @Inject
+    LocalRepository mLocalRepository;
+    @Inject
+    GiphyApi mRemoteRepository;
 
 
     /**
@@ -79,31 +96,123 @@ public class OnlineGifsFragment extends Fragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         initDagger();
-        mPresenter.onCreate();
+        initViewModel();
+        observeData();
+
+    }
+
+    private void initViewModel() {
+        mOnlineViewModel = ViewModelProviders.of(this,
+                new OnlineViewModelFactory(mLocalRepository, mRemoteRepository)).get(
+                OnlineViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.online_gifs_fragment, container, false);
         ButterKnife.bind(this, rootView);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         addOnScrollListener();
-        mPresenter.onCreateView();
         return rootView;
+    }
+
+
+    private void observeData() {
+        mOnlineViewModel.getSearchedGifs().observe(this, new Observer<Resource<List<Gif>>>() {
+            @Override
+            public void onChanged(@Nullable Resource<List<Gif>> resource) {
+                final List<Gif> gifs = resource.data;
+                if (gifs.size() == 0) {
+                    showToast(getResources().getString(R.string.no_gifs_found));
+                    return;
+                }
+
+                switch (resource.status) {
+                    case LOADING:
+                        Log.d(TAG, "Searched | onChanged | LOADING data");
+                        showLoadingSnackbar();
+                        break;
+                    case SUCCESS:
+                        Log.d(TAG, "Searched | onChanged | SUCCESS size = " + gifs.size());
+                        ThreadPool.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideSnackbar();
+                                hideProgressBar();
+                                if (isFirstSearchRequest) {
+                                    bindGifsList(gifs);
+                                    isFirstSearchRequest = false;
+                                } else {
+                                    updateGifsList(gifs);
+                                    hideSnackbar();
+                                }
+                            }
+                        });
+                        break;
+
+                    case ERROR:
+                        Log.d(TAG, "Searched | onChanged | ERROR size = " + gifs.size());
+                        onErrorResponse();
+                        break;
+                }
+            }
+        });
+
+
+        mOnlineViewModel.getTrendingGifs().observe(this, new Observer<Resource<List<Gif>>>() {
+            @Override
+            public void onChanged(@Nullable Resource<List<Gif>> resource) {
+                final List<Gif> gifs = resource.data;
+                if (gifs.size() == 0) {
+                    showToast(getResources().getString(R.string.no_gifs_found));
+                    return;
+                }
+
+                switch (resource.status) {
+                    case LOADING:
+                        Log.d(TAG, "Trending | onChanged | LOADING data ");
+                        showLoadingSnackbar();
+                        break;
+                    case SUCCESS:
+                        Log.d(TAG, "Trending | onChanged | SUCCESS size = " + gifs.size());
+                        ThreadPool.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideSnackbar();
+                                hideProgressBar();
+                                bindGifsList(gifs);
+                            }
+                        });
+                        break;
+                    case ERROR:
+                        Log.d(TAG, "Trending | onChanged | ERROR size = " + gifs.size());
+                        onErrorResponse();
+                        break;
+                }
+            }
+        });
+    }
+
+    private void onErrorResponse() {
+        ThreadPool.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideProgressBar();
+                showErrorSnackbar();
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.onResume();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.onDestroy();
     }
 
     /**
@@ -118,7 +227,7 @@ public class OnlineGifsFragment extends Fragment
                 int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                     if (!mRecyclerView.canScrollVertically(1)) {
-                        mPresenter.onBottomReached();
+                        mOnlineViewModel.onBottomReached();
                     }
                 }
             }
@@ -127,8 +236,12 @@ public class OnlineGifsFragment extends Fragment
 
     private void initDagger() {
         DaggerOnlineGifsComponent.builder()
-                .repositoryComponent(((GiphyViewerApplication) getActivity().getApplication()).getRepositoryComponent())
-                .giphyApiComponent(((GiphyViewerApplication) getActivity().getApplication()).getGiphyApiComponent())
+                .localRepositoryComponent(
+                        ((GiphyViewerApplication) getActivity().getApplication())
+                                .getLocalRepositoryComponent())
+                .giphyApiComponent(
+                        ((GiphyViewerApplication) getActivity().getApplication())
+                                .getGiphyApiComponent())
                 .onlineGifsModule(new OnlineGifsModule(this))
                 .build().inject(this);
     }
@@ -144,7 +257,7 @@ public class OnlineGifsFragment extends Fragment
     @Override
     public boolean onQueryTextSubmit(String query) {
         mQuery = query;
-        mPresenter.onSearchSubmitted(query);
+        mOnlineViewModel.onSearchSubmitted(query);
         mSearchView.setQuery("", false);
         mSearchView.clearFocus();
         return true;
@@ -172,12 +285,14 @@ public class OnlineGifsFragment extends Fragment
         if (mAdapter != null) {
             /**
              * We execute like this because of the next bug
-             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method-in-a-scroll-callback-recyclerview-v724-2
+             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method
+             * -in-a-scroll-callback-recyclerview-v724-2
              */
             mRecyclerView.post(new Runnable() {
                 public void run() {
                     /**
-                     * We don't use notifyItemRangeInserted because we keep replicating this known Android bug
+                     * We don't use notifyItemRangeInserted because we keep replicating this
+                     * known Android bug
                      * https://issuetracker.google.com/issues/37007605
                      */
                     mAdapter.notifyDataSetChanged();
@@ -192,20 +307,22 @@ public class OnlineGifsFragment extends Fragment
     @Override
     public void showLoadingSnackbar() {
         mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_gifs),
-                                  Snackbar.LENGTH_INDEFINITE);
-        mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
+                Snackbar.LENGTH_INDEFINITE);
+        mSnackbar.getView().setBackgroundColor(
+                ContextCompat.getColor(getActivity(), R.color.black));
         mSnackbar.show();
     }
 
     @Override
     public void showErrorSnackbar() {
-        mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.error_network_connection),
-                                  Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
+        mSnackbar = Snackbar.make(mRecyclerView,
+                getResources().getString(R.string.error_network_connection),
+                Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSnackbar.dismiss();
                 showLoadingSnackbar();
-                mPresenter.onRetryGifsRequest();
+                mOnlineViewModel.onRetryGifsRequest();
             }
         });
         mSnackbar.show();
@@ -220,6 +337,7 @@ public class OnlineGifsFragment extends Fragment
 
 
     @Override
+    //TODO not needed anymore (the Viewmodel save the query locally)
     public String getSearchText() {
         return mQuery;
     }
@@ -237,7 +355,7 @@ public class OnlineGifsFragment extends Fragment
 
     @Override
     public void onFavouriteGifItemClick(View v, Gif gif, int position) {
-        mPresenter.onGifSetAsFavourite(v, gif);
+        mOnlineViewModel.onGifSetAsFavourite(gif);
         chooseFavouriteIcon(gif, position);
     }
 
@@ -247,15 +365,17 @@ public class OnlineGifsFragment extends Fragment
         Drawable favIcon = getResources().getDrawable(R.drawable.rate_star_big_on_holo_dark);
 
         if (isFavourite(gif)) {
-            ((ImageView) mRecyclerView.findViewById(R.id.item_online_gifs_favourite_button)).setImageDrawable(favIcon);
+            ((ImageView) mRecyclerView.findViewById(
+                    R.id.item_online_gifs_favourite_button)).setImageDrawable(favIcon);
         } else {
-            ((ImageView) mRecyclerView.findViewById(R.id.item_online_gifs_favourite_button)).setImageDrawable(regIcon);
+            ((ImageView) mRecyclerView.findViewById(
+                    R.id.item_online_gifs_favourite_button)).setImageDrawable(regIcon);
         }
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public boolean isFavourite(Gif gif) {
-        return mPresenter.isAlreadyFavourite(gif);
+        return mOnlineViewModel.isAlreadyFavourite(gif);
     }
 }

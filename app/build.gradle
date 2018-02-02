@@ -83,4 +83,6 @@ dependencies {
     compile "android.arch.persistence.room:runtime:" + ROOM
     annotationProcessor "android.arch.persistence.room:compiler:" + ROOM
 
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:1.1.0"
 }

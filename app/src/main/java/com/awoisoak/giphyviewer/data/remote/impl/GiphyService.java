@@ -1,6 +1,7 @@
-package com.awoisoak.giphyviewer.data.remote;
+package com.awoisoak.giphyviewer.data.remote.impl;
 
 
+import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 
 import retrofit2.Call;

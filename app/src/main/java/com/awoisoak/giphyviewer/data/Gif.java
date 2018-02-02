@@ -13,18 +13,16 @@ import android.support.annotation.NonNull;
  * Gif Object
  */
 //TODO set id as an index?
-@Entity(tableName = "gifs",indices = {@Index(value = {"id"}, unique = true)})
+@Entity(tableName = "gifs", indices = {@Index(value = {"local_id"}, unique = true)})
 public class Gif {
-    public final static String URL = "url";
-    public final static String FAVORITE = "favorite";
 
     /**
      * Makes sure the id is the primary key (ensures uniqueness)
      */
-    @PrimaryKey
-    @NonNull
-    String id;
-    String url;
+    @PrimaryKey(autoGenerate = true)
+    public int local_id;
+    public String server_id;
+    public String url;
 
 
     /**
@@ -33,17 +31,34 @@ public class Gif {
     @Ignore
     public Gif() {
     }
+    /**
+     * Default constructor
+     */
+    @Ignore
+    public Gif(String server_id, String url) {
+        this.server_id = server_id;
+        this.url = url;
+    }
 
-    public Gif(String id, String url) {
-        this.id = id;
+    /**
+     * Constructor to be used by Room
+     * @param local_id  auto-generated local id by room
+     * @param server_id server id
+     */
+    public Gif(int local_id, String server_id, String url) {
+        this.local_id = local_id;
+        this.server_id = server_id;
         this.url = url;
     }
 
 
-    public String getId() {
-        return id;
+    public int getId() {
+        return local_id;
     }
 
+    public String getServerId() {
+        return server_id;
+    }
 
     public String getUrl() {
         return url;
@@ -55,6 +70,6 @@ public class Gif {
             return false;
         }
         Gif other = (Gif) o;
-        return id.equals(other.id);
+        return local_id == other.local_id;
     }
 }

@@ -2,7 +2,6 @@ package com.awoisoak.giphyviewer.data.remote.impl;
 
 
 import com.awoisoak.giphyviewer.data.Gif;
-import com.awoisoak.giphyviewer.data.remote.GiphyService;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.GiphyResponse;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
 import com.google.gson.JsonArray;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
  */
 
 
-class ListGifsDeserializer<T extends GiphyResponse> implements JsonDeserializer<ListGifsResponse> {
+public class ListGifsDeserializer<T extends GiphyResponse> implements JsonDeserializer<ListGifsResponse> {
 
 
     public ListGifsDeserializer() {

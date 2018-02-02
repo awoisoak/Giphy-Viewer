@@ -1,7 +1,7 @@
 package com.awoisoak.giphyviewer.data.remote.dagger;
 
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
-import com.awoisoak.giphyviewer.data.remote.impl.GiphyManager;
+import com.awoisoak.giphyviewer.data.remote.RemoteRepository;
 
 import dagger.Module;
 import dagger.Provides;
@@ -11,6 +11,6 @@ public class GiphyApiModule {
 
     @Provides
     GiphyApi provideGiphyApi() {
-        return GiphyManager.getInstance();
+        return RemoteRepository.getInstance();
     }
 }

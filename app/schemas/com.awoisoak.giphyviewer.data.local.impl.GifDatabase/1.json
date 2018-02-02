@@ -2,17 +2,23 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "64c9c8c014f8cd0b81e4765d97d1543f",
+    "identityHash": "12fc76c3e9edc68474916974aee7592e",
     "entities": [
       {
         "tableName": "gifs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `url` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`local_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `server_id` TEXT, `url` TEXT)",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "TEXT",
+            "fieldPath": "local_id",
+            "columnName": "local_id",
+            "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "server_id",
+            "columnName": "server_id",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "url",
@@ -23,18 +29,18 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "local_id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
-            "name": "index_gifs_id",
+            "name": "index_gifs_local_id",
             "unique": true,
             "columnNames": [
-              "id"
+              "local_id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_gifs_id` ON `${TABLE_NAME}` (`id`)"
+            "createSql": "CREATE UNIQUE INDEX `index_gifs_local_id` ON `${TABLE_NAME}` (`local_id`)"
           }
         ],
         "foreignKeys": []
@@ -42,7 +48,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"64c9c8c014f8cd0b81e4765d97d1543f\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"12fc76c3e9edc68474916974aee7592e\")"
     ]
   }
 }

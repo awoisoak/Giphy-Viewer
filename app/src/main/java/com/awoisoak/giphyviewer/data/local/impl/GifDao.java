@@ -1,5 +1,6 @@
 package com.awoisoak.giphyviewer.data.local.impl;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -36,8 +37,8 @@ public interface GifDao {
      * @return 1 if removed, 0 otherwise
      */
     //TODO this can't return a boolean
-    @Query("DELETE FROM gifs WHERE id = :id")
-    int removeGif(String id);
+    @Query("DELETE FROM gifs WHERE local_id = :id")
+    int removeGif(int id);
 
 
     /**
@@ -46,7 +47,7 @@ public interface GifDao {
      * @return Gifs List, empty list if no Gif was found
      */
     @Query("SELECT * FROM gifs")
-    List<Gif> getAllGifs();
+    LiveData<List<Gif>> getAllGifs();
 
 
     /**
@@ -55,8 +56,8 @@ public interface GifDao {
      * @return Gifs List, empty list if no Gif was found
      */
     //TODO id > or >= than offset??
-    @Query("SELECT * FROM gifs WHERE id > :offset")
-    List<Gif> getGifs(int offset);
+    @Query("SELECT * FROM gifs WHERE local_id > :offset")
+    LiveData<List<Gif>> getGifs(int offset);
 
     /**
      * Remove all gifs

@@ -1,17 +1,9 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger;
 
 
-import com.awoisoak.giphyviewer.data.Repository;
-import com.awoisoak.giphyviewer.data.local.GifDataStore;
-import com.awoisoak.giphyviewer.domain.interactors.DatabaseInteractor;
-import com.awoisoak.giphyviewer.domain.interactors.impl.DatabaseInteractorImpl;
-import com.awoisoak.giphyviewer.presentation.ActivityScope;
-import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsPresenter;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsView;
-import com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl.OfflineGifsPresenterImpl;
 
 import dagger.Module;
-import dagger.Provides;
 
 @Module
 public class OfflineGifsModule {
@@ -21,15 +13,9 @@ public class OfflineGifsModule {
         mView = view;
     }
 
-    @Provides
-    @ActivityScope
-    DatabaseInteractor provideDatabaseInteractor(Repository repository) {
-        return new DatabaseInteractorImpl(repository);
-    }
-
-    @Provides
-    @ActivityScope
-    OfflineGifsPresenter provideGifsOfflinePresenter(DatabaseInteractor interactor) {
-        return new OfflineGifsPresenterImpl(mView, interactor);
-    }
+//    @Provides
+//    @ActivityScope
+//    OfflineViewModel provideGifsOfflineViewModel(LocalRepository localRepository) {
+//        return new OfflineViewModelFactory(localRepository).create(OfflineViewModel.class);
+//    }
 }

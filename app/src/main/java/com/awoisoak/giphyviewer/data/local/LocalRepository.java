@@ -1,40 +1,46 @@
-package com.awoisoak.giphyviewer.data;
+package com.awoisoak.giphyviewer.data.local;
 
+import android.arch.lifecycle.LiveData;
 import android.util.Log;
 
+import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.local.impl.GifDao;
 import com.awoisoak.giphyviewer.data.local.impl.GifDatabase;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by awo on 1/17/18.
  */
 
-public class Repository {
+public class LocalRepository {
+    public static int MAX_NUMBER_GIFS_RETURNED = 25;
+
+    @Inject
     GifDatabase mDatabase ;
+    @Inject
     GifDao mGifDao;
-    private static final String LOG_TAG = Repository.class.getSimpleName();
+    private static final String LOG_TAG = LocalRepository.class.getSimpleName();
 
     // For Singleton instantiation
     private static final Object LOCK = new Object();
-    private static Repository sInstance;
+    private static LocalRepository sInstance;
 
 
-    private Repository(GifDao gifDao) {
-        //TODO These dependencies shouldn't be initializated here
-        GifDatabase mDatabase = GifDatabase.getInstance(GiphyViewerApplication.getGiphyViewerApplication());
-        mGifDao = mDatabase.gifDao() ;
+    private LocalRepository(GifDao gifDao) {
+        mGifDao = gifDao ;
     }
 
 
 
-    public synchronized static Repository getInstance(GifDao gifDao) {
+    public synchronized static LocalRepository getInstance(GifDao gifDao) {
         Log.d(LOG_TAG, "Getting the repository");
         if (sInstance == null) {
             synchronized (LOCK) {
-                sInstance = new Repository(gifDao);
+                sInstance = new LocalRepository(gifDao);
                 Log.d(LOG_TAG, "Made new repository");
             }
         }
@@ -62,7 +68,7 @@ public class Repository {
      * @param id gif unique identifier
      * @return 1 if removed, 0 otherwise
      */
-    public int removeGif(String id){
+    public int removeGif(int id){
     return mGifDao.removeGif(id);
     }
 
@@ -72,7 +78,7 @@ public class Repository {
      *
      * @return Gifs List, empty list if no Gif was found
      */
-    public List<Gif> getAllGifs(){
+    public LiveData<List<Gif>> getAllGifs(){
         return mGifDao.getAllGifs();
     }
 
@@ -82,7 +88,7 @@ public class Repository {
      *
      * @return Gifs List, empty list if no Gif was found
      */
-    public List<Gif> getGifs(int offset){
+    public LiveData<List<Gif>> getGifs(int offset){
         return mGifDao.getGifs(offset);
     }
 
