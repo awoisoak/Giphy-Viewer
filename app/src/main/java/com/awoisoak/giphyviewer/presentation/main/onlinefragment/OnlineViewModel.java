@@ -1,5 +1,8 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
 
+import static com.awoisoak.giphyviewer.data.Status.ERROR;
+import static com.awoisoak.giphyviewer.data.Status.SUCCESS;
+
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
@@ -42,7 +45,7 @@ public class OnlineViewModel extends ViewModel {
 
     public OnlineViewModel(LocalRepository localRepository, GiphyApi remoteRepository) {
         mLocalRepository = localRepository;
-        mRemoteRepository =remoteRepository;
+        mRemoteRepository = remoteRepository;
         SignalManagerFactory.getSignalManager().register(this);
         observeDatabase();
         observeNetwork();
@@ -57,7 +60,7 @@ public class OnlineViewModel extends ViewModel {
             @Override
             public void onChanged(@Nullable List<Gif> gifsFromDB) {
                 System.out.println(
-                        "awooooo | onlineGifsPresenterImpl | observeDb | onChanged | size="
+                        "awooooo | OnlineViewModel | observeDb | onChanged | size="
                                 + gifsFromDB.size());
                 mFavouriteGifs = gifsFromDB;
             }
@@ -82,53 +85,71 @@ public class OnlineViewModel extends ViewModel {
      * practices.
      *
      * In any case we needed to expose a Resource (data with a status associated) to the UI so it
-     * can behave properly depending on the data status. We don't expose the GiphyResponses to the UI
+     * can behave properly depending on the data status. We don't expose the GiphyResponses to the
+     * UI
      * but the 'real' data itself.
      */
+    //TODO don't observe forever. We probably should do some Transformation
+    //TODO both observers execute the same code, should we add them to the same observer?
     private void observeNetwork() {
         mRemoteRepository.getSearchGifs().observeForever(
                 new Observer<Resource<GiphyResponse>>() {
                     @Override
                     public void onChanged(@Nullable Resource<GiphyResponse> resource) {
-
-                        System.out.println(
-                                "awoooooo | OnlineGifsFragment | observeNetwork | onChanged | "
-                                        + "number of Gifs = "
-                                        + ((ListGifsResponse) resource.data).getList().size());
-                        switch (resource.status) {
-                            case SUCCESS:
-                                onGifsReceived((ListGifsResponse) resource.data,
-                                        resource.data.getTYPE());
-                                break;
-                            case ERROR:
-                                onErrorRetrievingGifs((ErrorResponse) resource.data,
-                                        resource.data.getTYPE());
-                                break;
-                            default:
-                                Log.e(TAG, "Unknown Resource Status");
-                        }
+                        parseResponse(resource);
                     }
                 });
+        mRemoteRepository.getTrendingGifs().observeForever(new Observer<Resource<GiphyResponse>>() {
+            @Override
+            public void onChanged(@Nullable Resource<GiphyResponse> resource) {
+                parseResponse(resource);
+            }
+        });
     }
+
+    private void parseResponse(Resource<GiphyResponse> resource) {
+        Log.d(TAG, "awoooooo  observeNetwork | onChanged | number of Gifs = "
+                + ((ListGifsResponse) resource.data).getList().size());
+        switch (resource.status) {
+            case SUCCESS:
+                onGifsReceived((ListGifsResponse) resource.data,
+                        resource.data.getTYPE());
+                break;
+            case ERROR:
+                onErrorRetrievingGifs((ErrorResponse) resource.data,
+                        resource.data.getTYPE());
+                break;
+            default:
+                Log.e(TAG, "Unknown Resource Status");
+        }
+    }
+
 
     private void onGifsReceived(ListGifsResponse response, GiphyApi.REQUEST_TYPE type) {
 
         switch (type) {
             case SEARCH:
                 isTrendingRequest = false;
-                //We make sure bind a new list against the adapter
-                //TODO is this really needed?
+
                 if (isFirstSearchRequest) {
-                    mSearchedGifs.postValue(Resource.loading(emptyList));
+                    /*
+                    If First request we post the value of the last response as we don't care
+                    if the adapter had previous data
+                    */
                     isFirstSearchRequest = false;
+                    mSearchedGifs.postValue(Resource.success(response.getList()));
+                } else {
+                    /*
+                        If not first request we need to post the previous value plus the one in
+                        the last response. The adapter will take care of updating the
+                        RecyclerView accordingly thanks to the DiffUtil
+                     */
+                    //Add the new gifs to the array and increase the offset
+                    List<Gif> tmp = mSearchedGifs.getValue().data;
+                    tmp.addAll(response.getList());
+                    mSearchedGifs.postValue(Resource.success(tmp));
                 }
-                //TODO should we keep all the values in mSearchedGifs?
-                //TODO By now we just postValue the last retrieved
-                //Add the new gifs to the array and increase the offset
-                //        List<Gif> tmp = mSearchedGifs.getValue();
-                //        tmp.addAll(response.getList());
-                //        mSearchedGifs.postValue(tmp);
-                mSearchedGifs.postValue(Resource.success(response.getList()));
+
                 increaseOffset();
                 mIsGifsRequestRunning = false;
                 if (mOffset >= response.getTotalRecords()) {
@@ -165,15 +186,15 @@ public class OnlineViewModel extends ViewModel {
         }
     }
 
-        /**
-         * Retrieve the trending gifs to be set as the default gifs in the recyclerView
-         */
+    /**
+     * Retrieve the trending gifs to be set as the default gifs in the recyclerView
+     */
 
     private void requestTrendingGifs() {
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
-                mRemoteRepository.getTrendingGifs();
+                mRemoteRepository.trending();
             }
         });
     }
@@ -181,9 +202,9 @@ public class OnlineViewModel extends ViewModel {
 
     private void requestToSearchNewGifs() {
         if (!mIsGifsRequestRunning) {
-            if (!isFirstSearchRequest) {
-                mSearchedGifs.postValue(Resource.loading(emptyList));
-            }
+//            if (!isFirstSearchRequest) {
+//                mSearchedGifs.postValue(Resource.loading(emptyList));
+//            }
             mIsGifsRequestRunning = true;
             ThreadPool.run(new Runnable() {
                 @Override
@@ -224,7 +245,7 @@ public class OnlineViewModel extends ViewModel {
     public void onBottomReached() {
         if (mAllGifsDownloaded) {
             return;
-        } else {
+        } else if (!isTrendingRequest) {
             requestToSearchNewGifs();
         }
     }

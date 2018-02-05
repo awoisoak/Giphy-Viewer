@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.Resource;
+import com.awoisoak.giphyviewer.data.Status;
 import com.awoisoak.giphyviewer.data.local.LocalRepository;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
@@ -63,7 +64,7 @@ public class OnlineGifsFragment extends Fragment
     RecyclerView mRecyclerView;
     @BindView(R.id.online_gifs_text_view)
     TextView mLoadingText;
-    private static final String TAG = OnlineGifsFragment.class.getSimpleName();
+    private static final String TAG = "awoooo" + OnlineGifsFragment.class.getSimpleName();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private Snackbar mSnackbar;
     private SearchView mSearchView;
@@ -124,7 +125,10 @@ public class OnlineGifsFragment extends Fragment
             @Override
             public void onChanged(@Nullable Resource<List<Gif>> resource) {
                 final List<Gif> gifs = resource.data;
-                if (gifs.size() == 0) {
+                Log.d(TAG, "getSearchedGifs | onChanged" + gifs.size() +
+                        "| status =" + resource.status);
+
+                if (gifs.size() == 0 && !resource.status.equals(Status.LOADING)) {
                     showToast(getResources().getString(R.string.no_gifs_found));
                     return;
                 }
@@ -165,6 +169,8 @@ public class OnlineGifsFragment extends Fragment
             @Override
             public void onChanged(@Nullable Resource<List<Gif>> resource) {
                 final List<Gif> gifs = resource.data;
+                Log.d(TAG, "getTrendingGifs | onChanged" + gifs.size());
+
                 if (gifs.size() == 0) {
                     showToast(getResources().getString(R.string.no_gifs_found));
                     return;
@@ -282,25 +288,7 @@ public class OnlineGifsFragment extends Fragment
 
     @Override
     public void updateGifsList(List<Gif> gifs) {
-        if (mAdapter != null) {
-            /**
-             * We execute like this because of the next bug
-             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method
-             * -in-a-scroll-callback-recyclerview-v724-2
-             */
-            mRecyclerView.post(new Runnable() {
-                public void run() {
-                    /**
-                     * We don't use notifyItemRangeInserted because we keep replicating this
-                     * known Android bug
-                     * https://issuetracker.google.com/issues/37007605
-                     */
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
-        } else {
-            Log.e(TAG, "awoooooo | OnlineGifsFragment | updateGifGallery | mAdapter is null!");
-        }
+        mAdapter.updateGifList(gifs);
     }
 
 

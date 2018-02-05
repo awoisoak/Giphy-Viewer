@@ -18,7 +18,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
+//TODO Use the DiffUtil as we did in the OnlineGifsAdapter
 public class OfflineGifsAdapter extends RecyclerView.Adapter<OfflineGifsAdapter.GifViewHolder> {
 
     private List<Gif> mGifs;
