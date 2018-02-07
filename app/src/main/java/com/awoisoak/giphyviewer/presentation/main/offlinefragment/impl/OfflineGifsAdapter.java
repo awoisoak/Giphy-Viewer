@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.awoisoak.giphyviewer.data.Gif;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,6 +62,45 @@ public class OfflineGifsAdapter extends RecyclerView.Adapter<OfflineGifsAdapter.
         super.registerAdapterDataObserver(observer);
     }
 
+    public void updateGifList(final List<Gif> gifs) {
+        if (mGifs == null) {
+            mGifs = gifs;
+            notifyItemRangeInserted(0, gifs.size());
+        } else {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return mGifs.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return gifs.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    /**
+                     * localId is only generated when Room create the objects so it is 0 when the
+                     * gifs are requested to the server. Because of that we compare them with the
+                     * server ID
+                     */
+                    return mGifs.get(oldItemPosition).getServerId() ==
+                            gifs.get(newItemPosition).getServerId();
+                }
+
+                @Override
+                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                    Gif newGif = gifs.get(newItemPosition);
+                    Gif oldGif = mGifs.get(oldItemPosition);
+                    return Objects.equals(newGif.getServerId(), oldGif.getServerId())
+                            && Objects.equals(newGif.getUrl(), oldGif.getUrl());
+                }
+            }, true);//items can be moved when we remove them
+            mGifs = gifs;
+            result.dispatchUpdatesTo(this);
+        }
+    }
 
     public class GifViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.item_offline_gif_image) ImageView ivGif;

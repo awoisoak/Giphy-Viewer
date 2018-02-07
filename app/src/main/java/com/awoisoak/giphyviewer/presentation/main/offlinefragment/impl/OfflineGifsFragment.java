@@ -161,26 +161,26 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
 
     @Override
     public void updateGifsList(List<Gif> gifs) {
-
-        if (mAdapter != null) {
-            /**
-             * We execute like this because of the next bug
-             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method
-             * -in-a-scroll-callback-recyclerview-v724-2
-             */
-            mRecyclerView.post(new Runnable() {
-                public void run() {
-                    /**
-                     * We don't use notifyItemRangeInserted because we keep replicating this
-                     * known Android bug
-                     * https://issuetracker.google.com/issues/37007605
-                     */
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
-        } else {
-            Log.e(TAG, "updateGifList | mAdapter is null!");
-        }
+        mAdapter.updateGifList(gifs);
+//        if (mAdapter != null) {
+//            /**
+//             * We execute like this because of the next bug
+//             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method
+//             * -in-a-scroll-callback-recyclerview-v724-2
+//             */
+//            mRecyclerView.post(new Runnable() {
+//                public void run() {
+//                    /**
+//                     * We don't use notifyItemRangeInserted because we keep replicating this
+//                     * known Android bug
+//                     * https://issuetracker.google.com/issues/37007605
+//                     */
+//                    mAdapter.notifyDataSetChanged();
+//                }
+//            });
+//        } else {
+//            Log.e(TAG, "updateGifList | mAdapter is null!");
+//        }
     }
 
     @Override

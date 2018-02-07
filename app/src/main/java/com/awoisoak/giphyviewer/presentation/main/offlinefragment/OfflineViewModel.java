@@ -1,10 +1,12 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
+import android.util.Log;
 
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.local.LocalRepository;
@@ -19,87 +21,105 @@ import java.util.List;
 /**
  * Created by awo on 1/24/18.
  */
+//TODO request new gifs do really make any sense? seems like we are retrieving all the gifs as once
 
 public class OfflineViewModel extends ViewModel {
     public static String TAG = OfflineViewModel.class.getSimpleName();
-
-    private MutableLiveData<List<Gif>> mGifs = new MutableLiveData<>();
+    // MediatorLiveData can observe other LiveData objects and react on their emissions.
+    private final MediatorLiveData<List<Gif>> mObservableGifs;
+    private Observer mObserver;
     private boolean isFirstRequest = true;
     private boolean mAllGifsRetrieved;
     private int mOffset;
     private LocalRepository mLocalRepository;
 
+
     public OfflineViewModel(LocalRepository localRepository) {
-        mLocalRepository = localRepository;
         SignalManagerFactory.getSignalManager().register(this);
-        observeDatabase();
+        mLocalRepository = localRepository;
+        mObservableGifs = new MediatorLiveData<>();
+        observeDB();
+        requestNewGifs();
+//        retrieveAllGifs();
     }
 
-
-    public LiveData<List<Gif>> getGifs() {
-        return mGifs;
-    }
-
-
-    private void observeDatabase() {
-        // As long as the repository exists, observe the network LiveData.
-        mLocalRepository.getAllGifs().observeForever(new Observer<List<Gif>>() {
+    private void observeDB() {
+        mObserver = new Observer<List<Gif>>() {
             @Override
             public void onChanged(@Nullable final List<Gif> gifs) {
-                //for some reason this method can be called in UI thread
-                System.out.println("awooooo | OfflineViewModel | database changed | size = " + gifs.size());
+                Log.d(TAG, "awooo Generic Observer | onchanged | size = " + gifs.size());
                 ThreadPool.run(new Runnable() {
                     @Override
                     public void run() {
-                        mGifs.postValue(gifs);
+                        //TODO use DIffUtil here? what about if its observing an offset request?
+                        //TODO in that case we should postValue only the specific gifs retrieved
+//                        List<Gif> newList = calculateNewList(gifs);
+
+                        //////
+                        //TODO this works on new requests but not when removing data as we are
+                        // adding the removed element again
+                        //TODO we should check which is the removed value and not post it in the
+                        // observable so the adapter can later update the list accordingly
+                        if (mLocalRepository.getTotalNumberOfGifs() < lastTotalNumberOfGifs){
+                            //TODO remove the removed element from mObservable and post the rest
+                            checkElementRemoved(gifs);
+                        }
+
+                        ////
+                        if (isFirstRequest || mObservableGifs.getValue() == null) {
+                            mObservableGifs.postValue(gifs);
+                        } else {
+                            List<Gif> tmp = mObservableGifs.getValue();
+                            tmp.addAll(gifs);
+                            mObservableGifs.postValue(tmp);
+                        }
+                        /////
                         increaseOffset();
-                        if (mOffset >= mLocalRepository.getTotalNumberOfGifs()) {
+                        int totalNumberOfGifs = mLocalRepository.getTotalNumberOfGifs();
+                        Log.d(TAG, "awooo totalNumberOfGifs = " + totalNumberOfGifs);
+                        if (mOffset >= totalNumberOfGifs) {
                             mAllGifsRetrieved = true;
                         }
                     }
                 });
-
             }
-        });
+        };
+    }
 
-
+    private void checkElementRemoved(List<Gif> gifs) {
+//        DiffUtil.DiffResult result= DiffUtil.calculateDiff();
     }
 
     /**
-     * Retrieve gifs from the DB and update the UI exposed data (mGifs)
+     * This method helps to calculate the final list given the original one (the one being
+     * displayed) and the one coming from the observer (on a new gif request to the DB or when a gif
+     * is added/removed)
      */
-    //TODO we should change the structure, this is being called from different methods as it was
-    // supposed to be called to request new data with a given offset
-    // here we should call a fectch method data and increase the offset, but the observation
-    // itself should be in onCreate so it's called just once
-    //TODO besides that the gifsFromDB is a local variable so it must be stopping to observer
-    // every single time it leaves the method
-    //TODO actually it looks like is not needed
+//    private List<Gif> calculateNewList(List<Gif> gifs) {
+//        DiffUtil.DiffResult result= DiffUtil.calculateDiff();
+//
+//    }
+    public LiveData<List<Gif>> getGifs() {
+        return mObservableGifs;
+    }
+
+
+//    private void retrieveAllGifs() {
+//        LiveData<List<Gif>> allGifsFromDB = mLocalRepository.getAllGifs();
+//        mObservableGifs.addSource(allGifsFromDB, mObserver);
+//    }
+
     private void requestNewGifs() {
+        //TODO we are using the local_id when using the offset for new requests
+        //TODO what about we remove them from the DB?, the local_id will dissapear so the offset
+        //TODO  won't make sense anymore
+        Log.d(TAG, "Request New Gifs | offset =" + mOffset);
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
                 LiveData<List<Gif>> gifsFromDB = mLocalRepository.getGifs(mOffset);
-                // As long as the repository exists, observe the network LiveData.
-                gifsFromDB.observeForever(new Observer<List<Gif>>() {
-                    @Override
-                    public void onChanged(@Nullable final List<Gif> gifs) {
-                        //for some reason this method can be called in UI thread
-                        System.out.println("awoooo database changed | size = " + gifs.size());
-                        ThreadPool.run(new Runnable() {
-                            @Override
-                            public void run() {
-                                mGifs.postValue(gifs);
-                                increaseOffset();
-                                if (mOffset >= mLocalRepository.getTotalNumberOfGifs()) {
-                                    mAllGifsRetrieved = true;
-                                }
-                            }
-                        });
-
-                    }
-                });
-
+                mObservableGifs.addSource(gifsFromDB, mObserver);
+                isFirstRequest = false;
             }
         });
     }
@@ -120,18 +140,10 @@ public class OfflineViewModel extends ViewModel {
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
-                if (mLocalRepository.removeGif(gif.getId()) > 0) {
-                    System.out.println(
-                            "awooooooooo | OffLineViewModel | onUnsetGifasFavourite | removed");
-//                    //TODO this should be necessary if livedata detect the delete queries too
-//                    List<Gif> tmp = mLocalRepository.getAllGifs().getValue();
-//                    mLocalRepository.removeAllGifs();
-//                    mLocalRepository.addGifs((Gif[]) tmp.toArray());
-//                    mGifs.postValue(tmp);
+                if (mLocalRepository.removeGif(gif.getServerId()) > 0) {
+                    Log.d(TAG, "gif removed");
                 } else {
-                    System.out.println(
-                            "awooooooooo | OffLineViewModel | onUnsetGifasFavourite | not removed");
-
+                    Log.d(TAG, "gif could NOT be removed");
                 }
             }
         });

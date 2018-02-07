@@ -29,12 +29,15 @@ import com.awoisoak.giphyviewer.data.Status;
 import com.awoisoak.giphyviewer.data.local.LocalRepository;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
+import com.awoisoak.giphyviewer.presentation.main.MainActivity;
+import com.awoisoak.giphyviewer.presentation.main.VisibleEvent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModel;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModelFactory;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.DaggerOnlineGifsComponent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.OnlineGifsModule;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -66,6 +69,7 @@ public class OnlineGifsFragment extends Fragment
     TextView mLoadingText;
     private static final String TAG = "awoooo" + OnlineGifsFragment.class.getSimpleName();
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final Object LOCK = new Object();
     private Snackbar mSnackbar;
     private SearchView mSearchView;
     private LinearLayoutManager mLayoutManager;
@@ -143,15 +147,14 @@ public class OnlineGifsFragment extends Fragment
                         ThreadPool.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                hideSnackbar();
-                                hideProgressBar();
                                 if (isFirstSearchRequest) {
                                     bindGifsList(gifs);
                                     isFirstSearchRequest = false;
                                 } else {
                                     updateGifsList(gifs);
-                                    hideSnackbar();
                                 }
+                                hideSnackbar();
+                                hideProgressBar();
                             }
                         });
                         break;
@@ -186,9 +189,9 @@ public class OnlineGifsFragment extends Fragment
                         ThreadPool.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                bindGifsList(gifs);
                                 hideSnackbar();
                                 hideProgressBar();
-                                bindGifsList(gifs);
                             }
                         });
                         break;
@@ -366,4 +369,6 @@ public class OnlineGifsFragment extends Fragment
     public boolean isFavourite(Gif gif) {
         return mOnlineViewModel.isAlreadyFavourite(gif);
     }
+
+
 }

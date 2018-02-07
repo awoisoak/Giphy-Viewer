@@ -2,23 +2,17 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "12fc76c3e9edc68474916974aee7592e",
+    "identityHash": "447631c2628b4ed69e6a21798ff1987b",
     "entities": [
       {
         "tableName": "gifs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`local_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `server_id` TEXT, `url` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`server_id` TEXT NOT NULL, `url` TEXT, PRIMARY KEY(`server_id`))",
         "fields": [
-          {
-            "fieldPath": "local_id",
-            "columnName": "local_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "server_id",
             "columnName": "server_id",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "url",
@@ -29,18 +23,18 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "local_id"
+            "server_id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_gifs_local_id",
+            "name": "index_gifs_server_id",
             "unique": true,
             "columnNames": [
-              "local_id"
+              "server_id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_gifs_local_id` ON `${TABLE_NAME}` (`local_id`)"
+            "createSql": "CREATE UNIQUE INDEX `index_gifs_server_id` ON `${TABLE_NAME}` (`server_id`)"
           }
         ],
         "foreignKeys": []
@@ -48,7 +42,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"12fc76c3e9edc68474916974aee7592e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"447631c2628b4ed69e6a21798ff1987b\")"
     ]
   }
 }

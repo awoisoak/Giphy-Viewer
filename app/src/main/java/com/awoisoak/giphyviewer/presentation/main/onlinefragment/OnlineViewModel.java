@@ -16,8 +16,11 @@ import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ErrorResponse;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.GiphyResponse;
 import com.awoisoak.giphyviewer.data.remote.impl.responses.ListGifsResponse;
+import com.awoisoak.giphyviewer.presentation.main.MainActivity;
+import com.awoisoak.giphyviewer.presentation.main.VisibleEvent;
 import com.awoisoak.giphyviewer.utils.signals.SignalManagerFactory;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -202,9 +205,11 @@ public class OnlineViewModel extends ViewModel {
 
     private void requestToSearchNewGifs() {
         if (!mIsGifsRequestRunning) {
-//            if (!isFirstSearchRequest) {
-//                mSearchedGifs.postValue(Resource.loading(emptyList));
-//            }
+            //TODO remove LOADING status?
+            if (!isFirstSearchRequest) {
+                //We don't wanna change the data but we wanna trigger the loading status
+                mSearchedGifs.postValue(Resource.loading(mSearchedGifs.getValue().data));
+            }
             mIsGifsRequestRunning = true;
             ThreadPool.run(new Runnable() {
                 @Override
@@ -263,7 +268,7 @@ public class OnlineViewModel extends ViewModel {
                     if (!isAlreadyFavourite(gif)) {
                         mLocalRepository.addGif(gif);
 //                    mFavouriteGifs.add(gif);
-                    } else if (mLocalRepository.removeGif(gif.getId()) > 0) {
+                    } else if (mLocalRepository.removeGif(gif.getServerId()) > 0) {
 //                    mFavouriteGifs.remove(gif);
                     }
                 }
@@ -278,7 +283,7 @@ public class OnlineViewModel extends ViewModel {
 
         synchronized (LOCK) {
             for (Gif favGif : mFavouriteGifs) {
-                if (favGif.getId() == (gif.getId())) {
+                if (favGif.getServerId().equals(gif.getServerId())) {
                     wasAlreadyFavourite = true;
                 }
             }
@@ -286,34 +291,26 @@ public class OnlineViewModel extends ViewModel {
         return wasAlreadyFavourite;
     }
 
-//TODO Do we need this at all?
-//    /**
-//     * This method will be called when the fragment is visible for the user
-//     */
-//    @Subscribe
-//    public void onVisibleEvent(final VisibleEvent event) {
-//        synchronized (LOCK) {
-//            if (event.getPosition() == MainActivity.SEARCH_TAB) {
-//                ThreadPool.run(new Runnable() {
-//                    @Override
-//                    public void run() {
-////                        // Not needed as we are already observing all data?
-////                        mLocalRepository.getAllGifs();
-//
-//
-//                        ThreadPool.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                // We force the recyclerView to be updated with the possible
-//                                // changes in the offline screen
-//                                mView.updateGifsList(mSearchedGifs);
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        }
-//    }
+//TODO Do we need this at all? Maybe not here but in the fragment directly
+
+    /**
+     * This method will be called when the fragment is visible for the user
+     */
+    @Subscribe
+    public void onVisibleEvent(final VisibleEvent event) {
+        Log.d(TAG, "onVisibleEvent | fragment visible ");
+        synchronized (LOCK) {
+            if (event.getPosition() == MainActivity.SEARCH_TAB) {
+                if (isTrendingRequest) {
+                    mTrendingGifs.setValue(Resource.success(mTrendingGifs.getValue().data));
+                } else {
+                    mSearchedGifs.setValue(Resource.success(mSearchedGifs.getValue().data));
+                }
+            }
+
+        }
+    }
+
 
 
     @Override

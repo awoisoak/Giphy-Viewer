@@ -16,7 +16,6 @@ import java.util.List;
 @Dao
 public interface GifDao {
 
-
     /**
      * Save Gif to the DB
      */
@@ -37,8 +36,8 @@ public interface GifDao {
      * @return 1 if removed, 0 otherwise
      */
     //TODO this can't return a boolean
-    @Query("DELETE FROM gifs WHERE local_id = :id")
-    int removeGif(int id);
+    @Query("DELETE FROM gifs WHERE server_id = :id")
+    int removeGif(String id);
 
 
     /**
@@ -55,9 +54,8 @@ public interface GifDao {
      *
      * @return Gifs List, empty list if no Gif was found
      */
-    //TODO id > or >= than offset??
-    @Query("SELECT * FROM gifs WHERE local_id > :offset")
-    LiveData<List<Gif>> getGifs(int offset);
+    @Query("SELECT * FROM gifs LIMIT :limit OFFSET :offset")
+    LiveData<List<Gif>> getGifs(int limit, int offset);
 
     /**
      * Remove all gifs

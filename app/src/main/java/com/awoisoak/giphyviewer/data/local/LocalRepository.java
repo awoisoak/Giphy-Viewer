@@ -17,10 +17,10 @@ import javax.inject.Inject;
  */
 
 public class LocalRepository {
-    public static int MAX_NUMBER_GIFS_RETURNED = 25;
+    public static int MAX_NUMBER_GIFS_RETURNED = 15;
 
     @Inject
-    GifDatabase mDatabase ;
+    GifDatabase mDatabase;
     @Inject
     GifDao mGifDao;
     private static final String LOG_TAG = LocalRepository.class.getSimpleName();
@@ -31,9 +31,8 @@ public class LocalRepository {
 
 
     private LocalRepository(GifDao gifDao) {
-        mGifDao = gifDao ;
+        mGifDao = gifDao;
     }
-
 
 
     public synchronized static LocalRepository getInstance(GifDao gifDao) {
@@ -46,11 +45,12 @@ public class LocalRepository {
         }
         return sInstance;
     }
+
     /**
      * Save Gif to the DB
      */
 
-    public void addGif(Gif gif){
+    public void addGif(Gif gif) {
         mGifDao.addGif(gif);
     }
 
@@ -58,7 +58,7 @@ public class LocalRepository {
     /**
      * Insert gif/gifs to the DB
      */
-    public void addGifs(Gif... gifs){
+    public void addGifs(Gif... gifs) {
         mGifDao.addGifs(gifs);
     }
 
@@ -68,8 +68,8 @@ public class LocalRepository {
      * @param id gif unique identifier
      * @return 1 if removed, 0 otherwise
      */
-    public int removeGif(int id){
-    return mGifDao.removeGif(id);
+    public int removeGif(String id) {
+        return mGifDao.removeGif(id);
     }
 
 
@@ -78,7 +78,7 @@ public class LocalRepository {
      *
      * @return Gifs List, empty list if no Gif was found
      */
-    public LiveData<List<Gif>> getAllGifs(){
+    public LiveData<List<Gif>> getAllGifs() {
         return mGifDao.getAllGifs();
     }
 
@@ -88,25 +88,25 @@ public class LocalRepository {
      *
      * @return Gifs List, empty list if no Gif was found
      */
-    public LiveData<List<Gif>> getGifs(int offset){
-        return mGifDao.getGifs(offset);
+    public LiveData<List<Gif>> getGifs(int offset) {
+        return mGifDao.getGifs(MAX_NUMBER_GIFS_RETURNED, offset);
     }
 
     /**
      * Remove all gifs from DB
+     *
      * @return number of rows removed
      */
-    public int removeAllGifs(){
+    public int removeAllGifs() {
         return mGifDao.removeAllGifs();
     }
 
     /**
      * Retrieve the total number of elements of DB
      */
-    public int getTotalNumberOfGifs(){
+    public int getTotalNumberOfGifs() {
         return mGifDao.getTotalNumberOfGifs();
     }
-
 
 
 }

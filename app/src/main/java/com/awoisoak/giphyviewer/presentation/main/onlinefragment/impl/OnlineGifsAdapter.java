@@ -82,7 +82,11 @@ public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.Gi
 
                 @Override
                 public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    //TODO fix the local ids (they r always 0!)
+                    /**
+                     * localId is only generated when Room create the objects so it is 0 when the
+                     * gifs are requested to the server. Because of that we compare them with the
+                     * server ID
+                     */
                     return mGifs.get(oldItemPosition).getServerId() ==
                             gifs.get(newItemPosition).getServerId();
                 }
@@ -91,11 +95,10 @@ public class OnlineGifsAdapter extends RecyclerView.Adapter<OnlineGifsAdapter.Gi
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                     Gif newGif = gifs.get(newItemPosition);
                     Gif oldGif = mGifs.get(oldItemPosition);
-                    return newGif.getId() == oldGif.getId()
-                            && Objects.equals(newGif.getServerId(), oldGif.getServerId())
+                    return  Objects.equals(newGif.getServerId(), oldGif.getServerId())
                             && Objects.equals(newGif.getUrl(), oldGif.getUrl());
                 }
-            },false);//Old and new lists are sorted by the same constraint and items never move
+            }, false);//Old and new lists are sorted by the same constraint and items never move
             mGifs = gifs;
             result.dispatchUpdatesTo(this);
         }

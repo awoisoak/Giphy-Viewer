@@ -12,15 +12,17 @@ import android.support.annotation.NonNull;
 /**
  * Gif Object
  */
-//TODO set id as an index?
-@Entity(tableName = "gifs", indices = {@Index(value = {"local_id"}, unique = true)})
+@Entity(tableName = "gifs", indices = {@Index(value = {"server_id"}, unique = true)})
 public class Gif {
-
     /**
-     * Makes sure the id is the primary key (ensures uniqueness)
+     * We use serverKey as an identifier and local_id as a primerary key of the database.
+     * Basically local_id will be used to set the Gifs in order within
+     * the database (needed for offset queries)
      */
-    @PrimaryKey(autoGenerate = true)
-    public int local_id;
+//    @PrimaryKey(autoGenerate = true)
+//    public int local_id;
+    @PrimaryKey
+    @NonNull
     public String server_id;
     public String url;
 
@@ -31,30 +33,32 @@ public class Gif {
     @Ignore
     public Gif() {
     }
+
     /**
      * Default constructor
      */
-    @Ignore
+//    @Ignore
     public Gif(String server_id, String url) {
         this.server_id = server_id;
         this.url = url;
     }
+//
+//    /**
+//     * Constructor to be used by Room
+//     *
+//     * @param local_id  auto-generated local id by room
+//     * @param server_id server id
+//     */
+//    public Gif(int local_id, String server_id, String url) {
+//        this.local_id = local_id;
+//        this.server_id = server_id;
+//        this.url = url;
+//    }
 
-    /**
-     * Constructor to be used by Room
-     * @param local_id  auto-generated local id by room
-     * @param server_id server id
-     */
-    public Gif(int local_id, String server_id, String url) {
-        this.local_id = local_id;
-        this.server_id = server_id;
-        this.url = url;
-    }
 
-
-    public int getId() {
-        return local_id;
-    }
+//    public int getId() {
+//        return local_id;
+//    }
 
     public String getServerId() {
         return server_id;
@@ -70,6 +74,6 @@ public class Gif {
             return false;
         }
         Gif other = (Gif) o;
-        return local_id == other.local_id;
+        return server_id == other.server_id;
     }
 }
