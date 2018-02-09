@@ -42,7 +42,7 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
 
     @BindView(R.id.offline_gifs_recycler)
     RecyclerView mRecyclerView;
-    public static final String TAG = OfflineGifsFragment.class.getSimpleName();
+    public static final String TAG = "awoooo" + OfflineGifsFragment.class.getSimpleName();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int GRID_COLUMNS = 2;
     private GridLayoutManager mLayoutManager;
@@ -83,12 +83,10 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
         mOfflineViewModel.getGifs().observe(this, new Observer<List<Gif>>() {
             @Override
             public void onChanged(@Nullable List<Gif> gifsRetrieved) {
-                if (/*mOffset == 0 && */gifsRetrieved== null || gifsRetrieved.size() == 0) {
-//                    bindGifsList(gifsRetrieved);//TODO when the last item is removed we might have to trigger this
+                if (gifsRetrieved== null) {
                     showtoast(getString(R.string.empty_database));
                     return;
                 }
-
                 if (isFirstRequest) {
                     bindGifsList(gifsRetrieved);
                     isFirstRequest = false;
@@ -162,25 +160,6 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
     @Override
     public void updateGifsList(List<Gif> gifs) {
         mAdapter.updateGifList(gifs);
-//        if (mAdapter != null) {
-//            /**
-//             * We execute like this because of the next bug
-//             * http://stackoverflow.com/questions/39445330/cannot-call-notifyiteminserted-method
-//             * -in-a-scroll-callback-recyclerview-v724-2
-//             */
-//            mRecyclerView.post(new Runnable() {
-//                public void run() {
-//                    /**
-//                     * We don't use notifyItemRangeInserted because we keep replicating this
-//                     * known Android bug
-//                     * https://issuetracker.google.com/issues/37007605
-//                     */
-//                    mAdapter.notifyDataSetChanged();
-//                }
-//            });
-//        } else {
-//            Log.e(TAG, "updateGifList | mAdapter is null!");
-//        }
     }
 
     @Override

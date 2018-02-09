@@ -30,7 +30,7 @@ import java.util.List;
  */
 
 public class OnlineViewModel extends ViewModel {
-    public static String TAG = OnlineViewModel.class.getSimpleName();
+    public static String TAG = "awoooo"+OnlineViewModel.class.getSimpleName();
 
     LocalRepository mLocalRepository;
     GiphyApi mRemoteRepository;

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 //TODO Use the DiffUtil as we did in the OnlineGifsAdapter
 public class OfflineGifsAdapter extends RecyclerView.Adapter<OfflineGifsAdapter.GifViewHolder> {
+    public static String TAG = "awoooo"+OfflineGifsAdapter.class.getSimpleName();
 
     private List<Gif> mGifs;
     private GifItemClickListener mListener;
@@ -36,6 +38,8 @@ public class OfflineGifsAdapter extends RecyclerView.Adapter<OfflineGifsAdapter.
 
     public OfflineGifsAdapter(List<Gif> gifs, GifItemClickListener listener, Context context) {
         mGifs = gifs;
+        Log.d(TAG,"mGifs is changed!! | OfflineGifsAdapter constructor | size = "+mGifs.size());
+
         mListener = listener;
         mContext = context;
     }
@@ -65,6 +69,7 @@ public class OfflineGifsAdapter extends RecyclerView.Adapter<OfflineGifsAdapter.
     public void updateGifList(final List<Gif> gifs) {
         if (mGifs == null) {
             mGifs = gifs;
+            Log.d(TAG,"mGifs is changed!! | mGifs was null | size = "+mGifs.size());
             notifyItemRangeInserted(0, gifs.size());
         } else {
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
@@ -96,9 +101,14 @@ public class OfflineGifsAdapter extends RecyclerView.Adapter<OfflineGifsAdapter.
                     return Objects.equals(newGif.getServerId(), oldGif.getServerId())
                             && Objects.equals(newGif.getUrl(), oldGif.getUrl());
                 }
-            }, true);//items can be moved when we remove them
+            }, true);//if tru items can be moved when we remove them
             mGifs = gifs;
+            Log.d(TAG,"mGifs updated where it is supposed to be | size = "+mGifs.size());
             result.dispatchUpdatesTo(this);
+            /*
+             For some reason in this case the dispatchUpdatesTo was not enough to update the list
+             */
+            notifyDataSetChanged();
         }
     }
 

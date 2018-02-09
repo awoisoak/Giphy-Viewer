@@ -5,7 +5,6 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
 import android.util.Log;
 
 import com.awoisoak.giphyviewer.data.Gif;
@@ -24,7 +23,7 @@ import java.util.List;
 //TODO request new gifs do really make any sense? seems like we are retrieving all the gifs as once
 
 public class OfflineViewModel extends ViewModel {
-    public static String TAG = OfflineViewModel.class.getSimpleName();
+    public static String TAG = "awoooo" + OfflineViewModel.class.getSimpleName();
     // MediatorLiveData can observe other LiveData objects and react on their emissions.
     private final MediatorLiveData<List<Gif>> mObservableGifs;
     private Observer mObserver;
@@ -32,6 +31,9 @@ public class OfflineViewModel extends ViewModel {
     private boolean mAllGifsRetrieved;
     private int mOffset;
     private LocalRepository mLocalRepository;
+    private int mLastTotalNumberOfGifs;
+    private Gif mLastGifRemoved;
+    private boolean requestingNewGifs;
 
 
     public OfflineViewModel(LocalRepository localRepository) {
@@ -44,6 +46,7 @@ public class OfflineViewModel extends ViewModel {
     }
 
     private void observeDB() {
+
         mObserver = new Observer<List<Gif>>() {
             @Override
             public void onChanged(@Nullable final List<Gif> gifs) {
@@ -51,33 +54,45 @@ public class OfflineViewModel extends ViewModel {
                 ThreadPool.run(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO use DIffUtil here? what about if its observing an offset request?
-                        //TODO in that case we should postValue only the specific gifs retrieved
-//                        List<Gif> newList = calculateNewList(gifs);
+                        //TODO The main problem seems to be that we are having multiple events in
+                        // the observer
+                        //TODO Seems to experience this problem only when new gifs are requested
+                        ////////////////////////
+                        //TODO in order to solve that problem we might try to synchronize all
+                            //???
+                        //////////////////////////
 
-                        //////
-                        //TODO this works on new requests but not when removing data as we are
-                        // adding the removed element again
-                        //TODO we should check which is the removed value and not post it in the
-                        // observable so the adapter can later update the list accordingly
-                        if (mLocalRepository.getTotalNumberOfGifs() < lastTotalNumberOfGifs){
-                            //TODO remove the removed element from mObservable and post the rest
-                            checkElementRemoved(gifs);
+
+                        // 1) A Gif has been removed
+                        if (mLocalRepository.getTotalNumberOfGifs() < mLastTotalNumberOfGifs) {
+                            Log.d(TAG, "postValue | gif removed ");
+                            List<Gif> tmp = getListAfterGifRemoved();
+                            mObservableGifs.postValue(tmp);
+                            //TODO this leaves mOffset = -1 at some point. Fix it.
+                            decreaseOffsetBy1();
                         }
-
-                        ////
-                        if (isFirstRequest || mObservableGifs.getValue() == null) {
+                        // 2) First Request to the DB or Gif added from onlineFragment
+                        else if (isFirstRequest || !requestingNewGifs
+                                || mObservableGifs.getValue() == null) {
+                            Log.d(TAG, "postValue | First Request to the DB ");
                             mObservableGifs.postValue(gifs);
-                        } else {
+                            increaseSpecificOffset(gifs.size());
+
+                        }
+                        // 3) Other offset request to the DB
+                        else {
+                            Log.d(TAG, "postValue | Other offset request to the DB ");
                             List<Gif> tmp = mObservableGifs.getValue();
                             tmp.addAll(gifs);
                             mObservableGifs.postValue(tmp);
+                            increaseOffset();
+
                         }
-                        /////
-                        increaseOffset();
-                        int totalNumberOfGifs = mLocalRepository.getTotalNumberOfGifs();
-                        Log.d(TAG, "awooo totalNumberOfGifs = " + totalNumberOfGifs);
-                        if (mOffset >= totalNumberOfGifs) {
+                        requestingNewGifs = false;
+                        mLastTotalNumberOfGifs = mLocalRepository.getTotalNumberOfGifs();
+                        Log.d(TAG, "awooo LastTotalNumberOfGifs = " + mLastTotalNumberOfGifs);
+                        if (mOffset >= mLastTotalNumberOfGifs || mLastTotalNumberOfGifs
+                                <= LocalRepository.MAX_NUMBER_GIFS_RETURNED) {
                             mAllGifsRetrieved = true;
                         }
                     }
@@ -86,8 +101,22 @@ public class OfflineViewModel extends ViewModel {
         };
     }
 
-    private void checkElementRemoved(List<Gif> gifs) {
-//        DiffUtil.DiffResult result= DiffUtil.calculateDiff();
+    /**
+     * Remove from current list of Gifs (mObservableGifs) the last Gif removed by the user
+     */
+    private List<Gif> getListAfterGifRemoved() {
+        String idRemoved = mLastGifRemoved.getServerId();
+        List<Gif> currentList = mObservableGifs.getValue();
+        Gif removedGif = null;
+        for (Gif gif : currentList) {
+            if (gif.getServerId().equals(idRemoved)) {
+                removedGif = gif;
+            }
+        }
+        if (removedGif != null) {
+            currentList.remove(removedGif);
+        }
+        return currentList;
     }
 
     /**
@@ -104,19 +133,16 @@ public class OfflineViewModel extends ViewModel {
     }
 
 
-//    private void retrieveAllGifs() {
-//        LiveData<List<Gif>> allGifsFromDB = mLocalRepository.getAllGifs();
-//        mObservableGifs.addSource(allGifsFromDB, mObserver);
-//    }
-
     private void requestNewGifs() {
-        //TODO we are using the local_id when using the offset for new requests
-        //TODO what about we remove them from the DB?, the local_id will dissapear so the offset
-        //TODO  won't make sense anymore
-        Log.d(TAG, "Request New Gifs | offset =" + mOffset);
+        Log.d(TAG, "RequestNewGifs | offset =" + mOffset);
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
+                /**
+                 * if you only call addSource once, the observer won't be triggered in the
+                 * following requests
+                 */
+                requestingNewGifs = true;
                 LiveData<List<Gif>> gifsFromDB = mLocalRepository.getGifs(mOffset);
                 mObservableGifs.addSource(gifsFromDB, mObserver);
                 isFirstRequest = false;
@@ -124,19 +150,29 @@ public class OfflineViewModel extends ViewModel {
         });
     }
 
-    public void increaseOffset() {
+    private void increaseSpecificOffset(int increment) {
+        mOffset += increment;
+    }
+
+    private void increaseOffset() {
         mOffset += LocalRepository.MAX_NUMBER_GIFS_RETURNED;
+    }
+
+    private void decreaseOffsetBy1() {
+        mOffset--;
     }
 
     public void onBottomReached() {
         if (mAllGifsRetrieved) {
             return;
         } else {
+            Log.d(TAG, "onBottomReached | AllGifsRetrieved is false | RequestNewGifs...");
             requestNewGifs();
         }
     }
 
     public void onUnsetGifAsFavourite(final Gif gif) {
+        mLastGifRemoved = gif;
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {
@@ -157,9 +193,11 @@ public class OfflineViewModel extends ViewModel {
     @Subscribe
     public void onVisibleEvent(final VisibleEvent event) {
         if (event.getPosition() == MainActivity.FAV_TAB) {
-            mAllGifsRetrieved = false;
-            isFirstRequest = true;
-            mOffset = 0;
+            //TODO or we enabled everything to start from scratch when swiping to offline fragment
+            //TODO or we disabled everything
+//            mAllGifsRetrieved = false;
+//            isFirstRequest = true;
+//            mOffset = 0;
             //TODO why?//////////
 //            List<Gif> tmp= mGifs.getValue();
 //            tmp.clear();
