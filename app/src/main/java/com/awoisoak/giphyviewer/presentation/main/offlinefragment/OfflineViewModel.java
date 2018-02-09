@@ -23,6 +23,7 @@ import java.util.List;
 //TODO request new gifs do really make any sense? seems like we are retrieving all the gifs as once
 
 public class OfflineViewModel extends ViewModel {
+    private static final Object LOCK = new Object();
     public static String TAG = "awoooo" + OfflineViewModel.class.getSimpleName();
     // MediatorLiveData can observe other LiveData objects and react on their emissions.
     private final MediatorLiveData<List<Gif>> mObservableGifs;
@@ -51,52 +52,53 @@ public class OfflineViewModel extends ViewModel {
             @Override
             public void onChanged(@Nullable final List<Gif> gifs) {
                 Log.d(TAG, "awooo Generic Observer | onchanged | size = " + gifs.size());
-                ThreadPool.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        //TODO The main problem seems to be that we are having multiple events in
-                        // the observer
-                        //TODO Seems to experience this problem only when new gifs are requested
-                        ////////////////////////
-                        //TODO in order to solve that problem we might try to synchronize all
-                            //???
-                        //////////////////////////
+                synchronized (LOCK) {
+                    ThreadPool.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            //TODO The main problem seems to be that we are having multiple
+                            // events in
+                            // the observer
+                            //TODO Seems to experience this problem only when new gifs are requested
+                            //as we are adding new sources to the generic observer
+                            ////////////////////////
 
 
-                        // 1) A Gif has been removed
-                        if (mLocalRepository.getTotalNumberOfGifs() < mLastTotalNumberOfGifs) {
-                            Log.d(TAG, "postValue | gif removed ");
-                            List<Gif> tmp = getListAfterGifRemoved();
-                            mObservableGifs.postValue(tmp);
-                            //TODO this leaves mOffset = -1 at some point. Fix it.
-                            decreaseOffsetBy1();
-                        }
-                        // 2) First Request to the DB or Gif added from onlineFragment
-                        else if (isFirstRequest || !requestingNewGifs
-                                || mObservableGifs.getValue() == null) {
-                            Log.d(TAG, "postValue | First Request to the DB ");
-                            mObservableGifs.postValue(gifs);
-                            increaseSpecificOffset(gifs.size());
+                            // 1) A Gif has been removed
+                            if (mLocalRepository.getTotalNumberOfGifs() < mLastTotalNumberOfGifs) {
+                                Log.d(TAG, "postValue | gif removed ");
+                                List<Gif> tmp = getListAfterGifRemoved();
+                                mObservableGifs.postValue(tmp);
+                                //TODO this leaves mOffset = -1 at some point. Fix it.
+                                decreaseOffsetBy1();
+                            }
+                            // 2) First Request to the DB or Gif added from onlineFragment
+                            else if (isFirstRequest || !requestingNewGifs
+                                    || mObservableGifs.getValue() == null) {
+                                Log.d(TAG, "postValue | First Request to the DB ");
+                                mObservableGifs.postValue(gifs);
+                                increaseSpecificOffset(gifs.size());
 
-                        }
-                        // 3) Other offset request to the DB
-                        else {
-                            Log.d(TAG, "postValue | Other offset request to the DB ");
-                            List<Gif> tmp = mObservableGifs.getValue();
-                            tmp.addAll(gifs);
-                            mObservableGifs.postValue(tmp);
-                            increaseOffset();
+                            }
+                            // 3) Other offset request to the DB
+                            else {
+                                Log.d(TAG, "postValue | Other offset request to the DB ");
+                                List<Gif> tmp = mObservableGifs.getValue();
+                                tmp.addAll(gifs);
+                                mObservableGifs.postValue(tmp);
+                                increaseOffset();
 
+                            }
+                            requestingNewGifs = false;
+                            mLastTotalNumberOfGifs = mLocalRepository.getTotalNumberOfGifs();
+                            Log.d(TAG, "awooo LastTotalNumberOfGifs = " + mLastTotalNumberOfGifs);
+                            if (mOffset >= mLastTotalNumberOfGifs || mLastTotalNumberOfGifs
+                                    <= LocalRepository.MAX_NUMBER_GIFS_RETURNED) {
+                                mAllGifsRetrieved = true;
+                            }
                         }
-                        requestingNewGifs = false;
-                        mLastTotalNumberOfGifs = mLocalRepository.getTotalNumberOfGifs();
-                        Log.d(TAG, "awooo LastTotalNumberOfGifs = " + mLastTotalNumberOfGifs);
-                        if (mOffset >= mLastTotalNumberOfGifs || mLastTotalNumberOfGifs
-                                <= LocalRepository.MAX_NUMBER_GIFS_RETURNED) {
-                            mAllGifsRetrieved = true;
-                        }
-                    }
-                });
+                    });
+                }
             }
         };
     }
@@ -144,6 +146,12 @@ public class OfflineViewModel extends ViewModel {
                  */
                 requestingNewGifs = true;
                 LiveData<List<Gif>> gifsFromDB = mLocalRepository.getGifs(mOffset);
+                //////////////////
+                //TODO only for testing the behaviour
+                //TODO if we go for it then the whole offset request in the DB is useless
+                LiveData<List<Gif>> allGifsObserved = mLocalRepository.getAllGifs();
+
+                //////////////////
                 mObservableGifs.addSource(gifsFromDB, mObserver);
                 isFirstRequest = false;
             }
