@@ -1,12 +1,11 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl;
 
 import android.arch.paging.PagedList;
-import android.arch.paging.PagedListAdapter;
 import android.arch.paging.PagedListAdapterHelper;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.recyclerview.extensions.DiffCallback;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,9 +24,8 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-//TODO Use the DiffUtil as we did in the OnlineGifsAdapter
 public class OfflineGifsPagedListAdapter extends
-        RecyclerView.Adapter< OfflineGifsPagedListAdapter.GifViewHolder> {
+        RecyclerView.Adapter<OfflineGifsPagedListAdapter.GifViewHolder> {
     public static String TAG = "awoooo" + OfflineGifsPagedListAdapter.class.getSimpleName();
     private GifItemClickListener mListener;
     private Context mContext;
@@ -42,16 +40,25 @@ public class OfflineGifsPagedListAdapter extends
     }
 
     public OfflineGifsPagedListAdapter(GifItemClickListener listener, Context context) {
-//        super(DIFF_CALLBACK);
         mListener = listener;
         mContext = context;
+        /**
+         * To avoid blinking the RV using unique ids. In order to work getItemId needs to be
+         * override to return an unique id
+         * https://stackoverflow.com/questions/48438944/how-to-stop-blinking-on-recycler-view
+         * -with-architecture-components-paging-librar
+         */
         setHasStableIds(true);
-
     }
 
     @Override
     public long getItemId(int position) {
-        return mHelper.getItem(position).getLocal_id();
+        try {
+            return mHelper.getItem(position).getLocal_id();
+        } catch (NullPointerException e) {
+            //workaround as sometimes the helper must not be synchronized and it was throwing a NPE
+            return RecyclerView.NO_ID;
+        }
     }
 
     @Override
@@ -81,16 +88,11 @@ public class OfflineGifsPagedListAdapter extends
     public void setList(PagedList<Gif> pagedList) {
         mHelper.setList(pagedList);
     }
+
     @Override
     public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
         super.registerAdapterDataObserver(observer);
     }
-
-    public void setList(List<Gif> gifs){
-        Log.d(TAG,"PagedListAdapter.setList called | size = "+gifs.size());
-
-    }
-
 
     public static final DiffCallback<Gif> DIFF_CALLBACK = new DiffCallback<Gif>() {
 
@@ -111,11 +113,6 @@ public class OfflineGifsPagedListAdapter extends
         }
 
     };
-
-
-
-
-
 
 
     public class GifViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -143,9 +140,9 @@ public class OfflineGifsPagedListAdapter extends
             mListener.onFavouriteGifItemClick(mHelper.getItem(getAdapterPosition()));
         }
 
-        public void clear (){
+        public void clear() {
             //TODO what exactly should we do here?
-            Toast.makeText(mContext,"GifViewHolder.clear() was called",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "GifViewHolder.clear() was called", Toast.LENGTH_SHORT).show();
         }
     }
 }

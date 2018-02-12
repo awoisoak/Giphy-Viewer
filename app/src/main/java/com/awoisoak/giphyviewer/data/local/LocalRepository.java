@@ -18,7 +18,7 @@ import javax.inject.Inject;
  */
 
 public class LocalRepository {
-    public static int MAX_NUMBER_GIFS_RETURNED = 5;
+    public static int MAX_NUMBER_GIFS_RETURNED = 1;
 
     @Inject
     GifDatabase mDatabase;
@@ -83,15 +83,6 @@ public class LocalRepository {
         return mGifDao.getAllGifs();
     }
 
-
-    /**
-     * Retrieve a list of gifs from DB given an offset
-     *
-     * @return Gifs List, empty list if no Gif was found
-     */
-    public LiveData<List<Gif>> getGifs(int offset) {
-        return mGifDao.getGifs(MAX_NUMBER_GIFS_RETURNED, offset);
-    }
 
     /**
      * Retrieve a list of gifs from DB using the Paging library

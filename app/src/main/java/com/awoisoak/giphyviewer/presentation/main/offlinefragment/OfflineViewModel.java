@@ -32,14 +32,8 @@ public class OfflineViewModel extends ViewModel {
     private final MediatorLiveData<List<Gif>> mObservableGifs;
     public final LiveData<PagedList<Gif>> gifList;
 
-    private Observer mObserver;
-    private boolean isFirstRequest = true;
-    private boolean mAllGifsRetrieved;
-    private int mOffset;
     private LocalRepository mLocalRepository;
-    private int mLastTotalNumberOfGifs;
-    private Gif mLastGifRemoved;
-    private boolean requestingNewGifs;
+
 
 
     public OfflineViewModel(LocalRepository localRepository) {
@@ -48,150 +42,21 @@ public class OfflineViewModel extends ViewModel {
         mObservableGifs = new MediatorLiveData<>();
         gifList = new LivePagedListBuilder<>(mLocalRepository.getGifsWithPagedList(),
                 LocalRepository.MAX_NUMBER_GIFS_RETURNED).build();
-//        observeDB();
-        requestNewGifs();
-//        retrieveAllGifs();
     }
 
-    private void observeDB() {
-
-
-        //TODO old system with offset
-//        mObserver = new Observer<List<Gif>>() {
-//            @Override
-//            public void onChanged(@Nullable final List<Gif> gifs) {
-//                Log.d(TAG, "awooo Generic Observer | onchanged | size = " + gifs.size());
-//                synchronized (LOCK) {
-//                    ThreadPool.run(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            //TODO The main problem seems to be that we are having multiple
-//                            // events in
-//                            // the observer
-//                            //TODO Seems to experience this problem only when new gifs are
-// requested
-//                            //as we are adding new sources to the generic observer
-//                            ////////////////////////
-//
-//
-//                            // 1) A Gif has been removed
-//                            if (mLocalRepository.getTotalNumberOfGifs() <
-// mLastTotalNumberOfGifs) {
-//                                Log.d(TAG, "postValue | gif removed ");
-//                                List<Gif> tmp = getListAfterGifRemoved();
-//                                mObservableGifs.postValue(tmp);
-//                                //TODO this leaves mOffset = -1 at some point. Fix it.
-//                                decreaseOffsetBy1();
-//                            }
-//                            // 2) First Request to the DB or Gif added from onlineFragment
-//                            else if (isFirstRequest || !requestingNewGifs
-//                                    || mObservableGifs.getValue() == null) {
-//                                Log.d(TAG, "postValue | First Request to the DB ");
-//                                mObservableGifs.postValue(gifs);
-//                                increaseSpecificOffset(gifs.size());
-//
-//                            }
-//                            // 3) Other offset request to the DB
-//                            else {
-//                                Log.d(TAG, "postValue | Other offset request to the DB ");
-//                                List<Gif> tmp = mObservableGifs.getValue();
-//                                tmp.addAll(gifs);
-//                                mObservableGifs.postValue(tmp);
-//                                increaseOffset();
-//
-//                            }
-//                            requestingNewGifs = false;
-//                            mLastTotalNumberOfGifs = mLocalRepository.getTotalNumberOfGifs();
-//                            Log.d(TAG, "awooo LastTotalNumberOfGifs = " + mLastTotalNumberOfGifs);
-//                            if (mOffset >= mLastTotalNumberOfGifs || mLastTotalNumberOfGifs
-//                                    <= LocalRepository.MAX_NUMBER_GIFS_RETURNED) {
-//                                mAllGifsRetrieved = true;
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//        };
-    }
-
-    /**
-     * Remove from current list of Gifs (mObservableGifs) the last Gif removed by the user
-     */
-    private List<Gif> getListAfterGifRemoved() {
-        String idRemoved = mLastGifRemoved.getServerId();
-        List<Gif> currentList = mObservableGifs.getValue();
-        Gif removedGif = null;
-        for (Gif gif : currentList) {
-            if (gif.getServerId().equals(idRemoved)) {
-                removedGif = gif;
-            }
-        }
-        if (removedGif != null) {
-            currentList.remove(removedGif);
-        }
-        return currentList;
-    }
-
-    /**
-     * This method helps to calculate the final list given the original one (the one being
-     * displayed) and the one coming from the observer (on a new gif request to the DB or when a gif
-     * is added/removed)
-     */
-//    private List<Gif> calculateNewList(List<Gif> gifs) {
-//        DiffUtil.DiffResult result= DiffUtil.calculateDiff();
-//
-//    }
     public LiveData<List<Gif>> getGifs() {
         return mObservableGifs;
     }
 
-
-    private void requestNewGifs() {
-//        Log.d(TAG, "RequestNewGifs | offset =" + mOffset);
-//        ThreadPool.run(new Runnable() {
-//            @Override
-//            public void run() {
-//                /**
-//                 * if you only call addSource once, the observer won't be triggered in the
-//                 * following requests
-//                 */
-//                requestingNewGifs = true;
-//                LiveData<List<Gif>> gifsFromDB = mLocalRepository.getGifs(mOffset);
-//                //////////////////
-//                //TODO only for testing the behaviour
-//                //TODO if we go for it then the whole offset request in the DB is useless
-//                LiveData<List<Gif>> allGifsObserved = mLocalRepository.getAllGifs();
-//
-//                //////////////////
-//                mObservableGifs.addSource(gifsFromDB, mObserver);
-//                isFirstRequest = false;
-//            }
-//        });
-    }
-
-    private void increaseSpecificOffset(int increment) {
-        mOffset += increment;
-    }
-
-    private void increaseOffset() {
-        mOffset += LocalRepository.MAX_NUMBER_GIFS_RETURNED;
-    }
-
-    private void decreaseOffsetBy1() {
-        mOffset--;
-    }
-
     public void onBottomReached() {
-        if (mAllGifsRetrieved) {
-            return;
-        } else {
-            Log.d(TAG, "onBottomReached | AllGifsRetrieved is false | RequestNewGifs...");
-            requestNewGifs();
-        }
+//        if (mAllGifsRetrieved) {
+//            return;
+//        } else {
+//            Log.d(TAG, "onBottomReached | AllGifsRetrieved is false | RequestNewGifs...");
+//        }
     }
 
     public void onUnsetGifAsFavourite(final Gif gif) {
-        mLastGifRemoved = gif;
         ThreadPool.run(new Runnable() {
             @Override
             public void run() {

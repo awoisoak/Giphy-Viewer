@@ -60,14 +60,6 @@ public interface GifDao {
 
 
     /**
-     * Retrieve a list of gifs given an offset
-     *
-     * @return Gifs List, empty list if no Gif was found
-     */
-    @Query("SELECT * FROM gifs LIMIT :limit OFFSET :offset")
-    LiveData<List<Gif>> getGifs(int limit, int offset);
-
-    /**
      * Remove all gifs
      * @return number of rows removed
      */

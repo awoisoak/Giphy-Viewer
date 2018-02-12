@@ -20,6 +20,8 @@ public class Gif {
      * We use serverKey as a global identifier and local_id as a primary key of the database.
      * Basically local_id will be used to set an unique long id needed to called to
      * setHasStableIds(true) in the offlineadapter to end with the blinking in the recyclerview
+     * local_id will exist only in items included in the DB, not in the ones only requested to the
+     * server
      */
     @PrimaryKey(autoGenerate = true)
     @NonNull
