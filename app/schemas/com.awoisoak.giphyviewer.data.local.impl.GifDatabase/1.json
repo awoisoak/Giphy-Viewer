@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "447631c2628b4ed69e6a21798ff1987b",
+    "identityHash": "fa9981ff442b04a29fe401b49ab329bd",
     "entities": [
       {
         "tableName": "gifs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`server_id` TEXT NOT NULL, `url` TEXT, PRIMARY KEY(`server_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`local_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `server_id` TEXT NOT NULL, `url` TEXT)",
         "fields": [
+          {
+            "fieldPath": "local_id",
+            "columnName": "local_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "server_id",
             "columnName": "server_id",
@@ -23,18 +29,18 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "server_id"
+            "local_id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
-            "name": "index_gifs_server_id",
+            "name": "index_gifs_local_id",
             "unique": true,
             "columnNames": [
-              "server_id"
+              "local_id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_gifs_server_id` ON `${TABLE_NAME}` (`server_id`)"
+            "createSql": "CREATE UNIQUE INDEX `index_gifs_local_id` ON `${TABLE_NAME}` (`local_id`)"
           }
         ],
         "foreignKeys": []
@@ -42,7 +48,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"447631c2628b4ed69e6a21798ff1987b\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"fa9981ff442b04a29fe401b49ab329bd\")"
     ]
   }
 }

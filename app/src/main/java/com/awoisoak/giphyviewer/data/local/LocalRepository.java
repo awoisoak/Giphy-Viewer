@@ -1,6 +1,7 @@
 package com.awoisoak.giphyviewer.data.local;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.DataSource;
 import android.util.Log;
 
 import com.awoisoak.giphyviewer.data.Gif;
@@ -17,7 +18,7 @@ import javax.inject.Inject;
  */
 
 public class LocalRepository {
-    public static int MAX_NUMBER_GIFS_RETURNED = 15;
+    public static int MAX_NUMBER_GIFS_RETURNED = 5;
 
     @Inject
     GifDatabase mDatabase;
@@ -90,6 +91,15 @@ public class LocalRepository {
      */
     public LiveData<List<Gif>> getGifs(int offset) {
         return mGifDao.getGifs(MAX_NUMBER_GIFS_RETURNED, offset);
+    }
+
+    /**
+     * Retrieve a list of gifs from DB using the Paging library
+     *
+     * @return Gifs List, empty list if no Gif was found
+     */
+    public DataSource.Factory<Integer,Gif> getGifsWithPagedList() {
+        return mGifDao.getGifsWithPagedList();
     }
 
     /**

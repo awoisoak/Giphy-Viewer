@@ -33,6 +33,7 @@ I am currently migrating the code to an MVVM pattern using the new [Android Arch
 - [Room](https://developer.android.com/topic/libraries/architecture/room.html)
 - [Livedata](https://developer.android.com/topic/libraries/architecture/livedata.html)
 - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel.html)
+- [Paging Library](https://developer.android.com/topic/libraries/architecture/paging.html)
 
 
 

@@ -1,6 +1,7 @@
 package com.awoisoak.giphyviewer.data.local.impl;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.DataSource;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -9,6 +10,7 @@ import android.arch.persistence.room.Query;
 import com.awoisoak.giphyviewer.data.Gif;
 
 import java.util.List;
+
 
 /**
  * Created by awo on 1/17/18.
@@ -47,6 +49,14 @@ public interface GifDao {
      */
     @Query("SELECT * FROM gifs")
     LiveData<List<Gif>> getAllGifs();
+
+    /**
+     * Retrieve all Gifs
+     *
+     * @return Gifs List, empty list if no Gif was found
+     */
+    @Query("SELECT * FROM gifs")
+    DataSource.Factory<Integer, Gif> getGifsWithPagedList();
 
 
     /**

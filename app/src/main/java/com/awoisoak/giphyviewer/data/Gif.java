@@ -12,16 +12,18 @@ import android.support.annotation.NonNull;
 /**
  * Gif Object
  */
-@Entity(tableName = "gifs", indices = {@Index(value = {"server_id"}, unique = true)})
+@Entity(tableName = "gifs", indices = {@Index(value = {"local_id"}, unique = true)})
 public class Gif {
+
+
     /**
-     * We use serverKey as an identifier and local_id as a primerary key of the database.
-     * Basically local_id will be used to set the Gifs in order within
-     * the database (needed for offset queries)
+     * We use serverKey as a global identifier and local_id as a primary key of the database.
+     * Basically local_id will be used to set an unique long id needed to called to
+     * setHasStableIds(true) in the offlineadapter to end with the blinking in the recyclerview
      */
-//    @PrimaryKey(autoGenerate = true)
-//    public int local_id;
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    public long local_id;
     @NonNull
     public String server_id;
     public String url;
@@ -37,28 +39,28 @@ public class Gif {
     /**
      * Default constructor
      */
-//    @Ignore
+    @Ignore
     public Gif(String server_id, String url) {
         this.server_id = server_id;
         this.url = url;
     }
-//
-//    /**
-//     * Constructor to be used by Room
-//     *
-//     * @param local_id  auto-generated local id by room
-//     * @param server_id server id
-//     */
-//    public Gif(int local_id, String server_id, String url) {
-//        this.local_id = local_id;
-//        this.server_id = server_id;
-//        this.url = url;
-//    }
+
+    /**
+     * Constructor to be used by Room
+     *
+     * @param local_id  auto-generated local id by room
+     * @param server_id server id
+     */
+    public Gif(long local_id, String server_id, String url) {
+        this.local_id = local_id;
+        this.server_id = server_id;
+        this.url = url;
+    }
 
 
-//    public int getId() {
-//        return local_id;
-//    }
+    public long getLocal_id() {
+        return local_id;
+    }
 
     public String getServerId() {
         return server_id;

@@ -85,4 +85,8 @@ dependencies {
 
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:1.1.0"
+
+    //Paging
+    implementation "android.arch.paging:runtime:1.0.0-alpha4-1"
+
 }
