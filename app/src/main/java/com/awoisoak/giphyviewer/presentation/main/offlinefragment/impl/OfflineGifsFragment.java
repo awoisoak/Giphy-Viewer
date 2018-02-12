@@ -124,7 +124,7 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        addOnScrollListener();
+//        addOnScrollListener();
         return rootView;
     }
 
@@ -137,21 +137,22 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
     /**
      * Method to detect when the RecyclerView bottom is reached
      */
-    private void addOnScrollListener() {
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                int visibleItemCount = mLayoutManager.getChildCount();
-                int totalItemCount = mLayoutManager.getItemCount();
-                int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
-                if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    if (!mRecyclerView.canScrollVertically(1)) {
-                        mOfflineViewModel.onBottomReached();
-                    }
-                }
-            }
-        });
-    }
+    //TODO remove if not needed anymore
+//    private void addOnScrollListener() {
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                int visibleItemCount = mLayoutManager.getChildCount();
+//                int totalItemCount = mLayoutManager.getItemCount();
+//                int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
+//                if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+//                    if (!mRecyclerView.canScrollVertically(1)) {
+//                        mOfflineViewModel.onBottomReached();
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     private void initDagger() {
         DaggerOfflineGifsComponent.builder()

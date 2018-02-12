@@ -29,7 +29,6 @@ public class OfflineViewModel extends ViewModel {
     private static final Object LOCK = new Object();
     public static String TAG = "awoooo" + OfflineViewModel.class.getSimpleName();
     // MediatorLiveData can observe other LiveData objects and react on their emissions.
-    private final MediatorLiveData<List<Gif>> mObservableGifs;
     public final LiveData<PagedList<Gif>> gifList;
 
     private LocalRepository mLocalRepository;
@@ -39,22 +38,18 @@ public class OfflineViewModel extends ViewModel {
     public OfflineViewModel(LocalRepository localRepository) {
         SignalManagerFactory.getSignalManager().register(this);
         mLocalRepository = localRepository;
-        mObservableGifs = new MediatorLiveData<>();
         gifList = new LivePagedListBuilder<>(mLocalRepository.getGifsWithPagedList(),
                 LocalRepository.MAX_NUMBER_GIFS_RETURNED).build();
     }
 
-    public LiveData<List<Gif>> getGifs() {
-        return mObservableGifs;
-    }
-
-    public void onBottomReached() {
+//TODO remove if not needed anymore
+//    public void onBottomReached() {
 //        if (mAllGifsRetrieved) {
 //            return;
 //        } else {
 //            Log.d(TAG, "onBottomReached | AllGifsRetrieved is false | RequestNewGifs...");
 //        }
-    }
+//    }
 
     public void onUnsetGifAsFavourite(final Gif gif) {
         ThreadPool.run(new Runnable() {

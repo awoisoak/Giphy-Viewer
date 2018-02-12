@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,8 +57,9 @@ public class OfflineGifsPagedListAdapter extends
         try {
             return mHelper.getItem(position).getLocal_id();
         } catch (NullPointerException e) {
-            //workaround as sometimes the helper must not be synchronized and it was throwing a NPE
-            return RecyclerView.NO_ID;
+            //ugly workaround to generate a random number as sometimes the helper must not be
+            // synchronized and it was throwing a NPE
+            return UUID.randomUUID().getMostSignificantBits();
         }
     }
 
@@ -76,6 +78,8 @@ public class OfflineGifsPagedListAdapter extends
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
+            //TODO might be it related to the issue with the getItemId in the adapter??
+            //TODO maybe we should do some changes here to avoid the issue?
             holder.clear();
         }
     }
