@@ -146,7 +146,7 @@ public class OfflineGifsPagedListAdapter extends
 
         public void clear() {
             //TODO what exactly should we do here?
-            Toast.makeText(mContext, "GifViewHolder.clear() was called", Toast.LENGTH_SHORT).show();
+            System.out.println("GifViewHolder.clear() was called");
         }
     }
 }

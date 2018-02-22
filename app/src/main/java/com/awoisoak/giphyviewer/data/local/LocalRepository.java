@@ -87,7 +87,7 @@ public class LocalRepository {
     /**
      * Retrieve a list of gifs from DB using the Paging library
      *
-     * @return Gifs List, empty list if no Gif was found
+     * @return DataSource Factory of Gifs
      */
     public DataSource.Factory<Integer,Gif> getGifsWithPagedList() {
         return mGifDao.getGifsWithPagedList();

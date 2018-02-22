@@ -36,20 +36,12 @@ public class OfflineViewModel extends ViewModel {
 
 
     public OfflineViewModel(LocalRepository localRepository) {
+        Log.d(TAG,"awoooo OfflineViewModel Constructor called!");
         SignalManagerFactory.getSignalManager().register(this);
         mLocalRepository = localRepository;
         gifList = new LivePagedListBuilder<>(mLocalRepository.getGifsWithPagedList(),
                 LocalRepository.MAX_NUMBER_GIFS_RETURNED).build();
     }
-
-//TODO remove if not needed anymore
-//    public void onBottomReached() {
-//        if (mAllGifsRetrieved) {
-//            return;
-//        } else {
-//            Log.d(TAG, "onBottomReached | AllGifsRetrieved is false | RequestNewGifs...");
-//        }
-//    }
 
     public void onUnsetGifAsFavourite(final Gif gif) {
         ThreadPool.run(new Runnable() {
@@ -72,19 +64,7 @@ public class OfflineViewModel extends ViewModel {
     @Subscribe
     public void onVisibleEvent(final VisibleEvent event) {
         if (event.getPosition() == MainActivity.FAV_TAB) {
-            //TODO or we enabled everything to start from scratch when swiping to offline fragment
-            //TODO or we disabled everything
-//            mAllGifsRetrieved = false;
-//            isFirstRequest = true;
-//            mOffset = 0;
-            //TODO why?//////////
-//            List<Gif> tmp= mGifs.getValue();
-//            tmp.clear();
-//            mGifs.postValue(tmp);
-            //////////////////
-            //TODO needed? u already did the very first fetch of data in the ViewModel creation
-//            requestNewGifs();
-
+            //TODO do something here?
         }
     }
 

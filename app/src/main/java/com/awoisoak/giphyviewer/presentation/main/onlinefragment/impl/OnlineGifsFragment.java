@@ -29,15 +29,12 @@ import com.awoisoak.giphyviewer.data.Status;
 import com.awoisoak.giphyviewer.data.local.LocalRepository;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
-import com.awoisoak.giphyviewer.presentation.main.MainActivity;
-import com.awoisoak.giphyviewer.presentation.main.VisibleEvent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModel;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModelFactory;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.DaggerOnlineGifsComponent;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.OnlineGifsModule;
 import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
-import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -83,6 +80,7 @@ public class OnlineGifsFragment extends Fragment
     LocalRepository mLocalRepository;
     @Inject
     GiphyApi mRemoteRepository;
+    private List<Gif> mFavouriteGifs;
 
 
     /**
@@ -200,6 +198,15 @@ public class OnlineGifsFragment extends Fragment
                         onErrorResponse();
                         break;
                 }
+            }
+        });
+
+        mOnlineViewModel.getGifsSavedInDB().observe(this, new Observer<List<Gif>>() {
+            @Override
+            public void onChanged(@Nullable List<Gif> gifs) {
+                Log.d(TAG, "getGifsSavedInDB  = " + gifs.size());
+                mFavouriteGifs = gifs;
+
             }
         });
     }
@@ -345,29 +352,67 @@ public class OnlineGifsFragment extends Fragment
 
 
     @Override
-    public void onFavouriteGifItemClick(View v, Gif gif, int position) {
-        mOnlineViewModel.onGifSetAsFavourite(gif);
-        chooseFavouriteIcon(gif, position);
+    public void onFavouriteGifItemClick(View v, final Gif gif, final int position) {
+        synchronized (LOCK) {
+            ThreadPool.run(new Runnable() {
+                @Override
+                public void run() {
+                    if (!isAlreadyFavourite(gif)) {
+                        mLocalRepository.addGif(gif);
+                    } else {
+                        mLocalRepository.removeGif(gif.getServerId());
+                    }
+                    chooseFavouriteIcon(gif, position);
+                }
+            });
+        }
+
     }
 
 
-    private void chooseFavouriteIcon(Gif gif, final int position) {
-        Drawable regIcon = getResources().getDrawable(R.drawable.ic_grade_white_48dp);
-        Drawable favIcon = getResources().getDrawable(R.drawable.rate_star_big_on_holo_dark);
+    public boolean isAlreadyFavourite(Gif gif) {
+        boolean wasAlreadyFavourite = false;
 
-        if (isFavourite(gif)) {
-            ((ImageView) mRecyclerView.findViewById(
-                    R.id.item_online_gifs_favourite_button)).setImageDrawable(favIcon);
-        } else {
-            ((ImageView) mRecyclerView.findViewById(
-                    R.id.item_online_gifs_favourite_button)).setImageDrawable(regIcon);
+        synchronized (LOCK) {
+            for (Gif favGif : mFavouriteGifs) {
+                if (favGif.getServerId().equals(gif.getServerId())) {
+                    wasAlreadyFavourite = true;
+                }
+            }
         }
-        mAdapter.notifyDataSetChanged();
+        return wasAlreadyFavourite;
+    }
+
+    private void chooseFavouriteIcon(final Gif gif, final int position) {
+        /**
+         * We delay the task in order to the favourite icon to be updated correctly. At this
+         * stage might be many tasks running on the UI thread (the adapter and the list might not be correctly synchronized yet) what was making
+         * the icon to not be changed directly.
+         */
+        ThreadPool.runOnUiThreadDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Drawable regIcon = getResources().getDrawable(R.drawable.ic_grade_white_48dp);
+                Drawable favIcon = getResources().getDrawable(
+                        R.drawable.rate_star_big_on_holo_dark);
+
+                if (isAlreadyFavourite(gif)) {
+                    ((ImageView) mRecyclerView.findViewById(
+                            R.id.item_online_gifs_favourite_button)).setImageDrawable(favIcon);
+                } else {
+                    ((ImageView) mRecyclerView.findViewById(
+                            R.id.item_online_gifs_favourite_button)).setImageDrawable(regIcon);
+                }
+                mAdapter.notifyDataSetChanged();
+
+            }
+        }, 500);
+
     }
 
     @Override
     public boolean isFavourite(Gif gif) {
-        return mOnlineViewModel.isAlreadyFavourite(gif);
+        return isAlreadyFavourite(gif);
     }
 
 

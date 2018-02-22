@@ -1,8 +1,6 @@
 package com.awoisoak.giphyviewer.presentation.main.onlinefragment;
 
-import static com.awoisoak.giphyviewer.data.Status.ERROR;
-import static com.awoisoak.giphyviewer.data.Status.SUCCESS;
-
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
@@ -36,7 +34,6 @@ public class OnlineViewModel extends ViewModel {
     GiphyApi mRemoteRepository;
     private MutableLiveData<Resource<List<Gif>>> mSearchedGifs = new MutableLiveData<>();
     private MutableLiveData<Resource<List<Gif>>> mTrendingGifs = new MutableLiveData<>();
-    private List<Gif> mFavouriteGifs = new ArrayList<>();
     private static final Object LOCK = new Object();
     private boolean isFirstSearchRequest = true;
     private boolean mAllGifsDownloaded;
@@ -45,29 +42,25 @@ public class OnlineViewModel extends ViewModel {
     private final List<Gif> emptyList = new ArrayList<>();
     private boolean isTrendingRequest = true;
     private String lastquery;
+    private LiveData<List<Gif>> mGifsSavedInDB;
 
     public OnlineViewModel(LocalRepository localRepository, GiphyApi remoteRepository) {
+        Log.d(TAG,"awoooo OnlineViewModel Constructor called!");
         mLocalRepository = localRepository;
         mRemoteRepository = remoteRepository;
         SignalManagerFactory.getSignalManager().register(this);
-        observeDatabase();
+        getDBLiveData();
         observeNetwork();
 
         requestTrendingGifs();
     }
 
-    //TODO remove the observerForever methods. See if the observation should be done in the UI,
-    // or u should use transformations
-    private void observeDatabase() {
-        mLocalRepository.getAllGifs().observeForever(new Observer<List<Gif>>() {
-            @Override
-            public void onChanged(@Nullable List<Gif> gifsFromDB) {
-                System.out.println(
-                        "awooooo | OnlineViewModel | observeDb | onChanged | size="
-                                + gifsFromDB.size());
-                mFavouriteGifs = gifsFromDB;
-            }
-        });
+    private void getDBLiveData() {
+        mGifsSavedInDB = mLocalRepository.getAllGifs();
+    }
+
+    public LiveData<List<Gif>>  getGifsSavedInDB(){
+        return mGifsSavedInDB;
     }
 
     public MutableLiveData<Resource<List<Gif>>> getSearchedGifs() {
@@ -88,8 +81,7 @@ public class OnlineViewModel extends ViewModel {
      * practices.
      *
      * In any case we needed to expose a Resource (data with a status associated) to the UI so it
-     * can behave properly depending on the data status. We don't expose the GiphyResponses to the
-     * UI
+w     * UI
      * but the 'real' data itself.
      */
     //TODO don't observe forever. We probably should do some Transformation
@@ -256,40 +248,6 @@ public class OnlineViewModel extends ViewModel {
     }
 
 
-    public void onGifSetAsFavourite(final Gif gif) {
-
-        //TODO implement the ds.addGif to return a boolean as well to make sure that if the sql
-        // fails we can rely in the lists
-        synchronized (LOCK) {
-
-            ThreadPool.run(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isAlreadyFavourite(gif)) {
-                        mLocalRepository.addGif(gif);
-//                    mFavouriteGifs.add(gif);
-                    } else if (mLocalRepository.removeGif(gif.getServerId()) > 0) {
-//                    mFavouriteGifs.remove(gif);
-                    }
-                }
-            });
-
-        }
-    }
-
-
-    public boolean isAlreadyFavourite(Gif gif) {
-        boolean wasAlreadyFavourite = false;
-
-        synchronized (LOCK) {
-            for (Gif favGif : mFavouriteGifs) {
-                if (favGif.getServerId().equals(gif.getServerId())) {
-                    wasAlreadyFavourite = true;
-                }
-            }
-        }
-        return wasAlreadyFavourite;
-    }
 
 //TODO Do we need this at all? Maybe not here but in the fragment directly
 

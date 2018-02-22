@@ -8,26 +8,26 @@ import java.util.List;
 public interface OfflineGifsView {
 
 
-    /**
-     * Bind the Gifs retrieved.
-     * The implementation should create the adapter and set them to the RecyclerView
-     *
-     * @param gifs
-     */
-    void bindGifsList(List<Gif> gifs);
-
-    /**
-     * Update the adapter with the new gifs added/removedd
-     *
-     * @param gifs
-     */
-    void updateGifsList(List<Gif> gifs);
-
-    /**
-     * Display a toast with the passed message
-     *
-     * @param message
-     */
-    void showtoast(String message);
+//    /**
+//     * Bind the Gifs retrieved.
+//     * The implementation should create the adapter and set them to the RecyclerView
+//     *
+//     * @param gifs
+//     */
+//    void bindGifsList(List<Gif> gifs);
+//
+//    /**
+//     * Update the adapter with the new gifs added/removedd
+//     *
+//     * @param gifs
+//     */
+//    void updateGifsList(List<Gif> gifs);
+//
+//    /**
+//     * Display a toast with the passed message
+//     *
+//     * @param message
+//     */
+//    void showtoast(String message);
 
 }

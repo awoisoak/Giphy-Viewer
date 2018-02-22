@@ -51,7 +51,6 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
     OfflineViewModel mOfflineViewModel;
     @Inject
     LocalRepository mLocalRepository;
-    private boolean isFirstRequest = true;
 
     public OfflineGifsFragment() {
     }
@@ -81,30 +80,7 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
     }
 
     private void observeData() {
-//        mOfflineViewModel.getGifs().observe(this, new Observer<List<Gif>>() {
-//            @Override
-//            public void onChanged(@Nullable List<Gif> gifsRetrieved) {
-//                if (gifsRetrieved== null) {
-//                    showtoast(getString(R.string.empty_database));
-//                    return;
-//                }
-//                if (isFirstRequest) {
-//                    bindGifsList(gifsRetrieved);
-//                    isFirstRequest = false;
-//                } else {
-//                    updateGifsList(gifsRetrieved);
-//                }
-//            }
-//        }
-        //TODO we don't need adapter to be a member class anymore
         mAdapter = new OfflineGifsPagedListAdapter(this, this.getActivity());
-        if (mAdapter == null){
-            System.out.println("awoooo adapter es null!");
-        }
-        else{
-            System.out.println("awoooo adapter NO es null!");
-        }
-
         mOfflineViewModel.gifList.observe(this, new Observer<PagedList<Gif>>() {
             @Override
             public void onChanged(@Nullable PagedList<Gif> gifs) {
@@ -161,35 +137,6 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
                                 .getLocalRepositoryComponent())
                 .offlineGifsModule(new OfflineGifsModule(this))
                 .build().inject(this);
-    }
-
-
-    @Override
-    public void bindGifsList(final List<Gif> gifs) {
-//        final OfflineGifsFragment f = this;
-//        ThreadPool.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                mAdapter = new OfflineGifsAdapter(gifs, f, getActivity());
-//                mRecyclerView.setAdapter(mAdapter);
-//            }
-//        });
-
-    }
-
-    @Override
-    public void updateGifsList(List<Gif> gifs) {
-//        mAdapter.updateGifList(gifs);
-    }
-
-    @Override
-    public void showtoast(final String message) {
-        ThreadPool.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
 

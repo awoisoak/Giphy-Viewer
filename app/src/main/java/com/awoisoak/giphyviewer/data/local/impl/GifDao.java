@@ -53,7 +53,7 @@ public interface GifDao {
     /**
      * Retrieve all Gifs
      *
-     * @return Gifs List, empty list if no Gif was found
+     * @return DataSource Factory of Gifs
      */
     @Query("SELECT * FROM gifs")
     DataSource.Factory<Integer, Gif> getGifsWithPagedList();

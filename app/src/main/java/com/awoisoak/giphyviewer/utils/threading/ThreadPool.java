@@ -11,7 +11,8 @@ import java.util.concurrent.Executors;
  * <p>
  * <p>
  * The domain layer should not use this class but the classes in the Presentation layer.
- * The rational is that Threadpool is platform dependant (it uses Handlers and Loopers) and the domain layer should be
+ * The rational is that Threadpool is platform dependant (it uses Handlers and Loopers) and the
+ * domain layer should be
  * platform independent
  */
 public final class ThreadPool {
@@ -31,6 +32,19 @@ public final class ThreadPool {
             sUiThreadHandler = new Handler(Looper.getMainLooper());
         }
         sUiThreadHandler.post(runnable);
+    }
+
+    /**
+     * Run the {@code Runnable} on the UI main thread.
+     *
+     * @param runnable the runnable
+     * @param long     time to delay the task
+     */
+    public static void runOnUiThreadDelayed(Runnable runnable, long delay) {
+        if (sUiThreadHandler == null) {
+            sUiThreadHandler = new Handler(Looper.getMainLooper());
+        }
+        sUiThreadHandler.postDelayed(runnable, delay);
     }
 
     /**
