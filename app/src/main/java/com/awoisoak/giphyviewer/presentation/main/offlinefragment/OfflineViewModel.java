@@ -23,7 +23,6 @@ import java.util.List;
 /**
  * Created by awo on 1/24/18.
  */
-//TODO request new gifs do really make any sense? seems like we are retrieving all the gifs as once
 
 public class OfflineViewModel extends ViewModel {
     private static final Object LOCK = new Object();
@@ -64,7 +63,7 @@ public class OfflineViewModel extends ViewModel {
     @Subscribe
     public void onVisibleEvent(final VisibleEvent event) {
         if (event.getPosition() == MainActivity.FAV_TAB) {
-            //TODO do something here?
+            //we don't need to do anything here on this branch
         }
     }
 

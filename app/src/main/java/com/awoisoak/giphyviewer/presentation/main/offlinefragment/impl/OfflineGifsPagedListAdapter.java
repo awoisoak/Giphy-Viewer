@@ -79,7 +79,7 @@ public class OfflineGifsPagedListAdapter extends
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
             //TODO might be it related to the issue with the getItemId in the adapter??
-            //TODO maybe we should do some changes here to avoid the issue?
+            //maybe we should do some changes here to avoid the issue?
             holder.clear();
         }
     }

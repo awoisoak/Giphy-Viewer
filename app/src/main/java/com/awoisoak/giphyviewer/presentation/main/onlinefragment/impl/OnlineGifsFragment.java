@@ -29,7 +29,6 @@ import com.awoisoak.giphyviewer.data.Status;
 import com.awoisoak.giphyviewer.data.local.LocalRepository;
 import com.awoisoak.giphyviewer.data.remote.GiphyApi;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
-import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineGifsView;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModel;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.OnlineViewModelFactory;
 import com.awoisoak.giphyviewer.presentation.main.onlinefragment.dagger.DaggerOnlineGifsComponent;
@@ -55,7 +54,7 @@ import butterknife.ButterKnife;
  */
 
 public class OnlineGifsFragment extends Fragment
-        implements OnlineGifsView, SearchView.OnQueryTextListener,
+        implements SearchView.OnQueryTextListener,
         OnlineGifsAdapter.GifItemClickListener, FavouriteListener {
 
     @BindView(R.id.online_gifs_progress_bar)
@@ -71,7 +70,6 @@ public class OnlineGifsFragment extends Fragment
     private SearchView mSearchView;
     private LinearLayoutManager mLayoutManager;
     private OnlineGifsAdapter mAdapter;
-    private String mQuery;
     private boolean isFirstSearchRequest = true;
 
 
@@ -272,7 +270,6 @@ public class OnlineGifsFragment extends Fragment
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        mQuery = query;
         mOnlineViewModel.onSearchSubmitted(query);
         mSearchView.setQuery("", false);
         mSearchView.clearFocus();
@@ -284,25 +281,21 @@ public class OnlineGifsFragment extends Fragment
         return false;
     }
 
-    @Override
     public void hideProgressBar() {
         mProgressBar.setVisibility(View.GONE);
         mLoadingText.setVisibility(View.GONE);
     }
 
-    @Override
     public void bindGifsList(List<Gif> gifs) {
         mAdapter = new OnlineGifsAdapter(gifs, this, this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    @Override
     public void updateGifsList(List<Gif> gifs) {
         mAdapter.updateGifList(gifs);
     }
 
 
-    @Override
     public void showLoadingSnackbar() {
         mSnackbar = Snackbar.make(mRecyclerView, getResources().getString(R.string.loading_gifs),
                 Snackbar.LENGTH_INDEFINITE);
@@ -311,7 +304,6 @@ public class OnlineGifsFragment extends Fragment
         mSnackbar.show();
     }
 
-    @Override
     public void showErrorSnackbar() {
         mSnackbar = Snackbar.make(mRecyclerView,
                 getResources().getString(R.string.error_network_connection),
@@ -326,7 +318,6 @@ public class OnlineGifsFragment extends Fragment
         mSnackbar.show();
     }
 
-    @Override
     public void hideSnackbar() {
         if (mSnackbar != null) {
             mSnackbar.dismiss();
@@ -334,13 +325,7 @@ public class OnlineGifsFragment extends Fragment
     }
 
 
-    @Override
-    //TODO not needed anymore (the Viewmodel save the query locally)
-    public String getSearchText() {
-        return mQuery;
-    }
 
-    @Override
     public void showToast(final String message) {
         ThreadPool.runOnUiThread(new Runnable() {
             @Override
@@ -406,7 +391,7 @@ public class OnlineGifsFragment extends Fragment
                 mAdapter.notifyDataSetChanged();
 
             }
-        }, 500);
+        }, 200);
 
     }
 

@@ -37,7 +37,6 @@ public interface GifDao {
      * @param id gif unique identifier
      * @return 1 if removed, 0 otherwise
      */
-    //TODO this can't return a boolean
     @Query("DELETE FROM gifs WHERE server_id = :id")
     int removeGif(String id);
 

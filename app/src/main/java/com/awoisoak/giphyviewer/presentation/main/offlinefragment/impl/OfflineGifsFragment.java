@@ -9,24 +9,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.awoisoak.giphyviewer.R;
 import com.awoisoak.giphyviewer.data.Gif;
 import com.awoisoak.giphyviewer.data.local.LocalRepository;
 import com.awoisoak.giphyviewer.presentation.GiphyViewerApplication;
-import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsView;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineViewModel;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineViewModelFactory;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger.DaggerOfflineGifsComponent;
 import com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger.OfflineGifsModule;
-import com.awoisoak.giphyviewer.utils.threading.ThreadPool;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,7 +32,7 @@ import butterknife.ButterKnife;
  * Req:
  * - Contains a recycler view that displays a grid of favourite gifs stored locally.
  */
-public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
+public class OfflineGifsFragment extends Fragment implements
         OfflineGifsPagedListAdapter.GifItemClickListener {
 
     @BindView(R.id.offline_gifs_recycler)
@@ -110,25 +104,6 @@ public class OfflineGifsFragment extends Fragment implements OfflineGifsView,
         super.onDestroy();
     }
 
-    /**
-     * Method to detect when the RecyclerView bottom is reached
-     */
-    //TODO remove if not needed anymore
-//    private void addOnScrollListener() {
-//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                int visibleItemCount = mLayoutManager.getChildCount();
-//                int totalItemCount = mLayoutManager.getItemCount();
-//                int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
-//                if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-//                    if (!mRecyclerView.canScrollVertically(1)) {
-//                        mOfflineViewModel.onBottomReached();
-//                    }
-//                }
-//            }
-//        });
-//    }
 
     private void initDagger() {
         DaggerOfflineGifsComponent.builder()

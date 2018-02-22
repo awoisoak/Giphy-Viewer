@@ -1,21 +1,17 @@
 package com.awoisoak.giphyviewer.presentation.main.offlinefragment.dagger;
 
 
-import com.awoisoak.giphyviewer.presentation.main.offlinefragment.OfflineGifsView;
+import com.awoisoak.giphyviewer.presentation.main.offlinefragment.impl.OfflineGifsFragment;
 
 import dagger.Module;
 
 @Module
 public class OfflineGifsModule {
-    private final OfflineGifsView mView;
+    private final OfflineGifsFragment mView;
 
-    public OfflineGifsModule(OfflineGifsView view) {
+    public OfflineGifsModule(OfflineGifsFragment view) {
         mView = view;
     }
 
-//    @Provides
-//    @ActivityScope
-//    OfflineViewModel provideGifsOfflineViewModel(LocalRepository localRepository) {
-//        return new OfflineViewModelFactory(localRepository).create(OfflineViewModel.class);
-//    }
+
 }
